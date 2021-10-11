@@ -1,8 +1,10 @@
 body {
-    background: #DDDDDD;
+    background: white;
 }
 
-
+.btn{
+    color: white;
+}
 .navbar {
     background-color: slategray;
     color: white;
