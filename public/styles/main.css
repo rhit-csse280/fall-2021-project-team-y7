@@ -6,7 +6,7 @@ body {
     color: white;
 }
 .navbar {
-    background-color: slategray;
+    background-color: rgb(0, 0, 0);
     color: white;
 }
 
@@ -27,9 +27,14 @@ body {
     grid-row: 1/6;
 }
 #addTask{
-    background-color: tomato;
+    background-color: black;
     grid-column: 2 /4;
   grid-row: 1 ;
+  text-align: center;
+}
+#addTask button{
+    margin: 15px 0;
+    font-size: 2rem;
 }
 #calendar{
     background-color: turquoise;
@@ -50,4 +55,8 @@ body {
 }
 .card{
     margin: 10px;
+    background-color: #8821be;
+    color: white;
 }
+
+
