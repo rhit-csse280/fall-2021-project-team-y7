@@ -13,3 +13,19 @@ body {
 .page-container {
     margin-top: 75px;
 }
+
+#tasks{
+    background-color: thistle;
+}
+#addTask{
+    background-color: tomato;
+}
+#calendar{
+    background-color: turquoise;
+}
+#timer{
+    background-color: violet;
+}
+#rewards{
+    background-color: yellowgreen;
+}
