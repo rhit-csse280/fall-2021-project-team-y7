@@ -2,6 +2,8 @@ var rhit = rhit || {};
 var countdown = 25;
 var secCountdown = 00;
 var timerOn = false;
+var countMin = null;
+var countSec = null;
 
 //From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 function htmlToElement(html) {
@@ -64,11 +66,15 @@ rhit.stopTimer = function(){
 	secCountdown = 00;
 	var countdownNumberEl = document.getElementById('countdown-number');
 	countdownNumberEl.textContent = `${countdown} : ${secCountdown}0`;
+	clearInterval(countMin);
+	clearInterval(countSec);
 
 }
 rhit.pauseTimer = function () {
 	var countdownNumberEl = document.getElementById('countdown-number');
 	countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+	clearInterval(countMin);
+	clearInterval(countSec);
 
 
 }
@@ -80,25 +86,34 @@ rhit.startTimer = function () {
 		var countdownNumberEl = document.getElementById('countdown-number');
 
 
-		countdownNumberEl.textContent = `${countdown} : ${secCountdown}0`;
-		countdown = 24;
+		countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+		
 
-		setInterval(function () {
+		countMin = setInterval(function () {
 				if (timerOn) {
+					
 				while (countdown != 0) {
+					if(timerOn){
 					countdown = --countdown;
+					}
 				}
 
 				countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
 				}
 		}, 60000);
 
-	setInterval(function () {
+		countSec = setInterval(function () {
+			//format as double digits
 		if(timerOn){
+			if(countdown == 25){
+				countdown = 24;
+			}
 			if(countdown != 0){secCountdown = --secCountdown <= 0 ? 59 : secCountdown;
 			} else{
 				while (secCountdown != 0) {
+					if(timerOn){
 					secCountdown = --secCountdown;
+					}
 				}
 			}
 		
