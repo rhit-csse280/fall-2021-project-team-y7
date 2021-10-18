@@ -85,25 +85,31 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     top: -10rem;
     right: -3rem;
     height: 300px;
+   /* transform: rotate(-90deg); */
+   
   }
+  
   svg circle {
     
     stroke-dasharray: 600px;
     stroke-dashoffset: 0px;
     stroke-linecap: round;
-    stroke-width: 10px;
+    stroke-width: 5px;
     stroke: blue;
     fill: lightblue;
-    animation-duration: 1500s;
+    animation-duration: 10s;
     animation-name: countdown;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+   
+
   
   }
   svg #countdown-number {
     stroke: white;
     fill: white;
     display: inline-block;
+    
   
   }
   #countdown {
@@ -119,13 +125,16 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   
   @keyframes countdown {
     from {
-      stroke-dashoffset: 0px;
+      stroke-dashoffset: 600px;
     }
     to {
-      stroke-dashoffset: 600px;
+      stroke-dashoffset: 0px;
     }
   }
 
+  #pauseButton{
+      display: none;
+  }
   .timerbtns{
     
       text-align: center;
