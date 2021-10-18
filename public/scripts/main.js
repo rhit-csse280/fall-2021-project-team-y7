@@ -29,39 +29,51 @@ rhit.ListPageController = class {
 		});
 
 		document.querySelector("#startButton").addEventListener("click", (event) => {
+
 			timerOn = true;
 			rhit.startTimer();
 			document.querySelector("#startButton").style.display = "none";
 			document.querySelector("#pauseButton").style.display = "inline";
-		
+			const animation = document.querySelector(".timerCircle");
+			animation.style.animationPlayState = "running";
 
-	});
-	document.querySelector("#stopButton").addEventListener("click", (event) => {
-		timerOn = false;
-		rhit.stopTimer();
-		document.querySelector("#startButton").style.display = "inline";
-		document.querySelector("#pauseButton").style.display = "none";
-	
 
-});
+		});
+		document.querySelector("#stopButton").addEventListener("click", (event) => {
+			timerOn = false;
+			rhit.stopTimer();
+			const animation = document.querySelector(".timerCircle");
+			animation.style.animationPlayState = "paused";
+
+			var newone = animation.cloneNode(true);
+			animation.parentNode.replaceChild(newone, animation);
+
+			document.querySelector("#startButton").style.display = "inline";
+			document.querySelector("#pauseButton").style.display = "none";
+
+
+		});
 
 
 		document.querySelector("#pauseButton").addEventListener("click", (event) => {
 			timerOn = false;
 			rhit.pauseTimer();
+
+			const animation = document.querySelector(".timerCircle");
+			animation.style.animationPlayState = "paused";
 			
-			
+
 			document.querySelector("#startButton").style.display = "inline";
 			document.querySelector("#pauseButton").style.display = "none";
 
-	});
+		});
 
 
 
 
 	}
 }
-rhit.stopTimer = function(){
+rhit.stopTimer = function () {
 	countdown = 25;
 	secCountdown = 00;
 	var countdownNumberEl = document.getElementById('countdown-number');
@@ -82,47 +94,48 @@ rhit.startTimer = function () {
 	//timer
 
 	//need to start css stroke as well
-	
-		var countdownNumberEl = document.getElementById('countdown-number');
+
+	var countdownNumberEl = document.getElementById('countdown-number');
 
 
-		countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
-		
+	countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
 
-		countMin = setInterval(function () {
+
+	countMin = setInterval(function () {
+		if (timerOn) {
+
+			while (countdown != 0) {
 				if (timerOn) {
-					
-				while (countdown != 0) {
-					if(timerOn){
 					countdown = --countdown;
-					}
 				}
+			}
 
-				countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
-				}
-		}, 60000);
+			countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+		}
+	}, 60000);
 
-		countSec = setInterval(function () {
-			//format as double digits
-		if(timerOn){
-			if(countdown == 25){
+	countSec = setInterval(function () {
+		//format as double digits
+		if (timerOn) {
+			if (countdown == 25) {
 				countdown = 24;
 			}
-			if(countdown != 0){secCountdown = --secCountdown <= 0 ? 59 : secCountdown;
-			} else{
+			if (countdown != 0) {
+				secCountdown = --secCountdown <= 0 ? 59 : secCountdown;
+			} else {
 				while (secCountdown != 0) {
-					if(timerOn){
-					secCountdown = --secCountdown;
+					if (timerOn) {
+						secCountdown = --secCountdown;
 					}
 				}
 			}
-		
 
-		countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+
+			countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
 		}
 	}, 1000);
 
-// end timer
+	// end timer
 }
 
 rhit.main = function () {
