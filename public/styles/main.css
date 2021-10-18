@@ -1,5 +1,5 @@
 body {
-    background: white;
+    background: rgb(194, 193, 193);
     font-family: 'Roboto';
 }
 
@@ -74,5 +74,64 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     background-color: #bbbbbb;
     border-color: #bbbbbb;
 }
+
+ 
+  
+ 
+  
+  svg {
+    text-align: center;
+    position:relative;
+    top: -10rem;
+    right: -3rem;
+    height: 300px;
+  }
+  svg circle {
+    
+    stroke-dasharray: 600px;
+    stroke-dashoffset: 0px;
+    stroke-linecap: round;
+    stroke-width: 10px;
+    stroke: blue;
+    fill: lightblue;
+    animation-duration: 1500s;
+    animation-name: countdown;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  
+  }
+  svg #countdown-number {
+    stroke: white;
+    fill: white;
+    display: inline-block;
+  
+  }
+  #countdown {
+    position: relative;
+    top: 5rem;
+    margin: auto;
+    margin-top: 100px;
+    text-align: center;
+    font-size: 3em;
+    color: white;
+    background-color: violet;
+  }
+  
+  @keyframes countdown {
+    from {
+      stroke-dashoffset: 0px;
+    }
+    to {
+      stroke-dashoffset: 600px;
+    }
+  }
+
+  .timerbtns{
+    
+      text-align: center;
+  }
+  .timerbtn{
+    font-size: 2rem;
+  }
 
 

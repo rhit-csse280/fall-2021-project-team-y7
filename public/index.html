@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/css/evo-calendar.min.css"/>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/css/evo-calendar.min.css" />
   <link rel="stylesheet" href="styles/main.css">
 
   <title>Gamified Planner</title>
@@ -22,24 +23,24 @@
 
     <div id="sectionWrapper">
       <div id="tasks">
-        
+
 
         <!-- Use Cards (like in Movie Quotes) to make these-->
 
 
         <div id="cardsContainer">
 
-          <div class="card" >
+          <div class="card">
             <div class="card-body">
-              <input type = "checkbox">
+              <input type="checkbox">
               <h5 class="card-title"> Task 1</h5>
               <h6 class="card-subtitle mb2 ">Due: October 12</h6>
             </div>
           </div>
 
-          <div class="card" >
+          <div class="card">
             <div class="card-body">
-              <input type = "checkbox">
+              <input type="checkbox">
               <h5 class="card-title"> Task 2</h5>
               <h6 class="card-subtitle mb2 ">Due: October 12</h6>
             </div>
@@ -48,13 +49,36 @@
       </div>
       <div id="addTask">
 
-        <button class = "btn" type = "button">Add Task</button>
+        <button id = "addTaskButton" class="btn" type="button">Add Task</button>
+
       </div>
+
+      <!--Calendar -->
       <div id="calendar">
         <div id="evoCalendar"></div>
       </div>
+
+
+
+      <!-- Timer-->
+
       <div id="timer">
-        25:00 Minute Timer
+
+        <div id="countdown">
+          <svg>
+            <circle cx="100" cy="100" r="95" />
+            <text id = "countdown-number" x="100" y="100" text-anchor="middle"  alignment-baseline="middle">
+            
+            </text>
+          </svg>
+        </div>
+        <div class = "timerbtns">
+          <button type = "button" class = "btn btn-outline-light timerbtn">Start</button>
+        <button type = "button" class = "btn btn-outline-light timerbtn">Stop</button>
+
+        </div>
+        
+        <!-- 25:00 Minute Timer
           <div id="pomodoro-clock">
             <div id="pomodoro-timer"></div>
             <div id="pomodoro-clock-actions">
@@ -62,9 +86,9 @@
               <button id="pomodoro-pause">Pause</button>
               <button id="pomodoro-stop">Stop</button>
             </div>
-          </div>
-        
-       
+          </div> -->
+
+
       </div>
       <div id="rewards">
         Streaks and Trophies
