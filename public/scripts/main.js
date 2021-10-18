@@ -95,8 +95,7 @@ rhit.pauseTimer = function () {
 rhit.startTimer = function () {
 	//timer
 
-	//need to start css stroke as well
-
+	
 	var countdownNumberEl = document.getElementById('countdown-number');
 
 
@@ -107,9 +106,10 @@ rhit.startTimer = function () {
 	countMin = setInterval(function () {
 		if (timerOn) {
 
-			while (countdown != 0) {
+			if (countdown != 0) {
 				if (timerOn) {
 					countdown = --countdown;
+					console.log(countdown);
 				}
 			}
 
@@ -126,6 +126,7 @@ rhit.startTimer = function () {
 			}
 			if (countdown != 0) {
 				secCountdown = --secCountdown <= 0 ? 59 : secCountdown;
+				console.log(countdown);
 			} else {
 				while (secCountdown != 0) {
 					if (timerOn) {

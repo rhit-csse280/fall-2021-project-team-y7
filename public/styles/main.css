@@ -93,7 +93,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     
     stroke-dasharray: 600px;
     stroke-dashoffset: 0px;
-    animation-duration: 15s;
+    animation-duration: 1500s;
     animation-name: countdown;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
