@@ -77,14 +77,16 @@ rhit.stopTimer = function () {
 	countdown = 25;
 	secCountdown = 00;
 	var countdownNumberEl = document.getElementById('countdown-number');
-	countdownNumberEl.textContent = `${countdown} : ${secCountdown}0`;
+	secString = secCountdown.toString().padStart(2, '0');
+	countdownNumberEl.textContent = `${countdown} : ${secString}`;
 	clearInterval(countMin);
 	clearInterval(countSec);
 
 }
 rhit.pauseTimer = function () {
 	var countdownNumberEl = document.getElementById('countdown-number');
-	countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+	secString = secCountdown.toString().padStart(2, '0');
+	countdownNumberEl.textContent = `${countdown} : ${secString}`;
 	clearInterval(countMin);
 	clearInterval(countSec);
 
@@ -98,7 +100,8 @@ rhit.startTimer = function () {
 	var countdownNumberEl = document.getElementById('countdown-number');
 
 
-	countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+	secString = secCountdown.toString().padStart(2, '0');
+	countdownNumberEl.textContent = `${countdown} : ${secString}`;
 
 
 	countMin = setInterval(function () {
@@ -110,7 +113,8 @@ rhit.startTimer = function () {
 				}
 			}
 
-			countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+			secString = secCountdown.toString().padStart(2, '0');
+			countdownNumberEl.textContent = `${countdown} : ${secString}`;
 		}
 	}, 60000);
 
@@ -131,7 +135,8 @@ rhit.startTimer = function () {
 			}
 
 
-			countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+			secString = secCountdown.toString().padStart(2, '0');
+			countdownNumberEl.textContent = `${countdown} : ${secString}`;
 		}
 	}, 1000);
 
