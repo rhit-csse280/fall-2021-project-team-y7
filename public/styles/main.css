@@ -97,7 +97,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     stroke-width: 5px;
     stroke: blue;
     fill: lightblue;
-    animation-duration: 10s;
+    animation-duration: 1500s;
     animation-name: countdown;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
