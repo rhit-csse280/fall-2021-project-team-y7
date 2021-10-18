@@ -94,7 +94,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     stroke-dasharray: 600px;
     stroke-dashoffset: 0px;
     stroke-linecap: round;
-    stroke-width: 5px;
+    stroke-width: 10px;
     stroke: blue;
     fill: lightblue;
     animation-duration: 1500s;
@@ -125,10 +125,10 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   
   @keyframes countdown {
     from {
-      stroke-dashoffset: 600px;
+      stroke-dashoffset: 0px;
     }
     to {
-      stroke-dashoffset: 0px;
+      stroke-dashoffset: 600px;
     }
   }
 

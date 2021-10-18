@@ -63,7 +63,7 @@ rhit.stopTimer = function(){
 	countdown = 25;
 	secCountdown = 00;
 	var countdownNumberEl = document.getElementById('countdown-number');
-	countdownNumberEl.textContent = `${countdown} : ${secCountdown}`;
+	countdownNumberEl.textContent = `${countdown} : ${secCountdown}0`;
 
 }
 rhit.pauseTimer = function () {
