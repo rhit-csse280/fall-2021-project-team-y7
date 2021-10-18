@@ -31,6 +31,23 @@ rhit.ClassName = class {
 /** function and class syntax examples */
 rhit.main = function () {
 	console.log("Ready");
+	$("#evoCalendar").evoCalendar({
+		todayHighlight: true,
+		sidebarDisplayDefault: false,
+		sidebarToggler: false,
+		eventDisplayDefault: false,
+		eventListToggler: false,
+		calendarEvents: [
+			{
+			  id: 'bHay68s', // Event's ID (required)
+			  name: "Task 1", // Event name (required)
+			  date: "October/12/2021", // Event date (required)
+			  type: "event", // Event type (required)
+			  everyYear: false // Same event every year (optional)
+			}
+		]
+	});
+		
 };
 
 rhit.main();
