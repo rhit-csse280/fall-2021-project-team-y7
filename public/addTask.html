@@ -23,16 +23,19 @@
   <div id="mainPage" class="container page-container">
        
       <div id="addTaskForm">
-        <label for = "taskName">Task Name:</label>
-        <input type = "text" id = "taskName">
-        <br>
-        <label for = "dueDate">Due Date:</label>
-        <input type = "text" id = "dueDate">
-        <br>
-        <label for = "description">Description:</label>
-        <input type = "text" id = "description">
-        <br>
-        <button id = "addButton" class="btn" type="button">Add Task</button>
+        <div class="form-outline">
+          <input type="text" id="taskName" class="form-control" />
+          <label class="form-label" for="taskName">Task Name</label>
+        </div>
+        <div class="form-outline">
+          <input type="text" id="dueDate" class="form-control" />
+          <label class="form-label" for="dueDate">Due Date</label>
+        </div>
+        <div class="form-outline">
+          <input type="text" id="desc" class="form-control" />
+          <label class="form-label" for="desc">Description</label>
+        </div>
+        <button id = "addButton" class="btn btn-outline" type="button">Add Task</button>
 
       </div>
   
