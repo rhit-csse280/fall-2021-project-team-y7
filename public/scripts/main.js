@@ -258,7 +258,7 @@ rhit.main = function () {
 	new rhit.ListPageController();
 	$("#evoCalendar").evoCalendar({
 		todayHighlight: true,
-		sidebarDisplayDefault: false,
+		sidebarDisplayDefault: true,
 		sidebarToggler: false,
 		eventDisplayDefault: false,
 		eventListToggler: false,
