@@ -18,6 +18,8 @@ rhit.ListPageController = class {
 
 		document.querySelector("#addTaskButton").addEventListener("click", (event) => {
 
+
+			document.location.href = "./addTask.html"
 			const list = document.querySelector("#cardsContainer");
 			const card = htmlToElement(`<div class = "card"> 
 		<div class = "card-body"> 

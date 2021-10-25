@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+  <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/css/evo-calendar.min.css" />
+  <link rel="stylesheet" href="styles/main.css">
+
+  <title>Gamified Planner</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">Gamified Planner - Add A Task</a>
+    <button class="btn" type="button">Log Out</button>
+
+
+  </nav>
+  <div id="mainPage" class="container page-container">
+       
+      <div id="addTaskForm">
+        <label for = "taskName">Task Name:</label>
+        <input type = "text" id = "taskName">
+        <br>
+        <label for = "dueDate">Due Date:</label>
+        <input type = "text" id = "dueDate">
+        <br>
+        <label for = "description">Description:</label>
+        <input type = "text" id = "description">
+        <br>
+        <button id = "addButton" class="btn" type="button">Add Task</button>
+
+      </div>
+  
+
+  <script src="scripts/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/js/evo-calendar.min.js"></script>
+  <script src="scripts/popper.js"></script>
+  <script src="scripts/bootstrap-material-design.js"></script>
+  <script>
+    $("body").bootstrapMaterialDesign();
+  </script>
+  <script src="/__/firebase/7.18.0/firebase-app.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
+  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>
