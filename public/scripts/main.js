@@ -1,4 +1,10 @@
 var rhit = rhit || {};
+rhit.FB_COLLECTION_TASKS = "Tasks";
+rhit.FB_KEY_NAME = "Name";
+rhit.FB_KEY_DUE_DATE = "Due Date";
+rhit.FB_KEY_DESC = "Description";
+rhit.FB_KEY_DATE_CREATED= "Date Created";
+
 var countdown = 25;
 var secCountdown = 00;
 var timerOn = false;
@@ -18,7 +24,7 @@ rhit.ListPageController = class {
 
 		if(document.querySelector("#addTaskButton") != null){
 		document.querySelector("#addTaskButton").addEventListener("click", (event) => {
-
+			
 
 			document.location.href = "./addTask.html"
 
@@ -38,10 +44,16 @@ rhit.ListPageController = class {
 			const name = document.querySelector("#taskName").value;
 			const date = document.querySelector("#dueDate").value;
 			const desc = document.querySelector("#desc").value;
-			
+			console.log("called add");
 			rhit.fbTasksManager.add(name, date, desc);
-			document.location.href = "index.html";
+			
 		});
+	}
+		if(document.querySelector("#returnButton") != null){
+			document.querySelector("#returnButton").addEventListener("click", (event) => {
+				document.location.href = "index.html";
+				
+			});
 	}	
 	if(document.querySelector("#startButton") != null){
 		document.querySelector("#startButton").addEventListener("click", (event) => {
@@ -129,25 +141,34 @@ rhit.FbTasksManager = class {
 	constructor() {
 		console.log("created tasks manager");
 		this._documentSnapshots = [];
-		this._ref = firebase.firestore().collection("Tasks");
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TASKS);
 		this._unsubscribe = null;
 	}
 	add(name, date, desc) {
-		console.log("adding a task");
-		this._ref.add({
-			//trouble with adding to firebase
-				["Name"]: name,
-				["Due Date"]: date,
-				["Date Created"]:firebase.firestore.Timestamp.now(),
-				["Description"]: desc,
-			})
-			.then(function (docRef) {
-				console.log("Document written with ID: ", docRef.id);
-			})
-			.catch(function (error) {
-				console.error("Error adding document: ", error);
-			})
+		
+		// console.log("adding a task");
+		// console.log(this._ref);
+		// console.log("doc is" ,this._ref.doc(
+		// 	"QWntQBCrRe0XISA9RPt4"));
 
+		this._ref.add({
+				
+				//trouble with adding to firebase
+					[rhit.FB_KEY_NAME]: name,
+					[rhit.FB_KEY_DUE_DATE]: date,
+					[rhit.FB_KEY_DATE_CREATED]:firebase.firestore.Timestamp.now(),
+					[rhit.FB_KEY_DESC]: desc,
+				})
+				.then(function (docRef) {
+					console.log("Document written with ID: ", docRef.id);
+				})
+				.catch(function (error) {
+					console.error("Error adding document: ", error);
+				})
+
+				setTimeout(() => { console.log("stop!"); }, 2000);
+				
+			console.log("task added");
 	}
 	beginListening(changeListener) {
 		this._unsubscribe = this._ref.orderBy("Date Created", "desc").limit(50).onSnapshot((querySnapshot) => {
