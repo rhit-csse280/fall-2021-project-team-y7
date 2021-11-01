@@ -109,13 +109,9 @@ if(document.querySelector("#pauseButton") != null){
 		//pause.removeEventListener("click", clickListen );
 	}
 
-	if(document.querySelector("#logoutButton") != null){
-		
-		const logout = document.querySelector("#logoutButton");
-		console.log("logout button exists");
-
-		// logout.onclick = rhit.fbAuthManager.signOut();
-	}
+	document.querySelector("#logoutButton").addEventListener("click", (event) => {
+		rhit.fbAuthManager.signOut();
+	});
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 	}
