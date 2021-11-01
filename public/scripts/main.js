@@ -1,10 +1,12 @@
+//const { data } = require("jquery");
+
 var rhit = rhit || {};
 rhit.FB_COLLECTION_TASKS = "Tasks";
 rhit.FB_KEY_NAME = "Name";
 rhit.FB_KEY_AUTHOR = "Author";
 rhit.FB_KEY_DUE_DATE = "Due Date";
 rhit.FB_KEY_DESC = "Description";
-rhit.FB_KEY_DATE_CREATED= "Date Created";
+rhit.FB_KEY_DATE_CREATED = "Date Created";
 
 var countdown = 24;
 var secCountdown = 59;
@@ -23,95 +25,100 @@ function htmlToElement(html) {
 rhit.ListPageController = class {
 	constructor() {
 
-		if(document.querySelector("#addTaskButton") != null){
-		document.querySelector("#addTaskButton").onclick = (event) => {
-			
+		if (document.querySelector("#addTaskButton") != null) {
+			document.querySelector("#addTaskButton").onclick = (event) => {
 
-			document.location.href = "./addTask.html"
 
-			
-		// 	const list = document.querySelector("#cardsContainer");
-		// 	const card = htmlToElement(`<div class = "card"> 
-		// <div class = "card-body"> 
-		// <h5 class = "card-title"> Default Task </h5> 
-		// <h6 class = "card-subtitle" mb-2 text-muted">Default Date</h6> 
-		// </div> </div>`);
-		// 	list.appendChild(card);
+				document.location.href = "./addTask.html"
 
-		};
-	}
-	if(document.querySelector("#trophiesButton") != null){
-		document.querySelector("#trophiesButton").onclick =  (event) => {
-			document.location.href = "trophies.html";
-			
-		};
-	}
-		if(document.querySelector("#addButton") != null){
-		document.querySelector("#addButton").onclick =  (event) => {
-			const name = document.querySelector("#taskName").value;
-			const date = document.querySelector("#dueDate").value;
-			const desc = document.querySelector("#desc").value;
-			console.log("called add");
-			rhit.fbTasksManager.add(name, date, desc);
-			
-		};
-	}
-		if(document.querySelector("#returnButton") != null){
+
+				// 	const list = document.querySelector("#cardsContainer");
+				// 	const card = htmlToElement(`<div class = "card"> 
+				// <div class = "card-body"> 
+				// <h5 class = "card-title"> Default Task </h5> 
+				// <h6 class = "card-subtitle" mb-2 text-muted">Default Date</h6> 
+				// </div> </div>`);
+				// 	list.appendChild(card);
+
+			};
+		}
+		if (document.querySelector("#trophiesButton") != null) {
+			document.querySelector("#trophiesButton").onclick = (event) => {
+				document.location.href = "trophies.html";
+
+			};
+		}
+		if (document.querySelector("#addButton") != null) {
+			document.querySelector("#addButton").onclick = (event) => {
+				const name = document.querySelector("#taskName").value;
+				const date = document.querySelector("#dueDate").value;
+				const desc = document.querySelector("#desc").value;
+				console.log("called add");
+				rhit.fbTasksManager.add(name, date, desc);
+				document.querySelector("#taskName").value = "";
+				document.querySelector("#dueDate").value = "";
+				document.querySelector("#desc").value = "";
+
+
+			};
+		}
+		if (document.querySelector("#returnButton") != null) {
 			document.querySelector("#returnButton").onclick = (event) => {
 				document.location.href = "index.html";
-				
+
 			};
-	}	
-	if(document.querySelector("#startButton") != null){
-		document.querySelector("#startButton").onclick =  (event) => {
-
-			timerOn = true;
-			rhit.startTimer();
-			document.querySelector("#startButton").style.display = "none";
-			document.querySelector("#pauseButton").style.display = "inline";
-			const animation = document.querySelector(".timerCircle");
-			animation.style.animationPlayState = "running";
-
-
-		};
-	}
-	if(document.querySelector("#stopButton") != null){
-		document.querySelector("#stopButton").onclick = (event) => {
-			timerOn = false;
-			rhit.stopTimer();
-			const animation = document.querySelector(".timerCircle");
-			animation.style.animationPlayState = "paused";
-
-			var newone = animation.cloneNode(true);
-			animation.parentNode.replaceChild(newone, animation);
-
-			document.querySelector("#startButton").style.display = "inline";
-			document.querySelector("#pauseButton").style.display = "none";
-
-
-		};
-	}
-
-if(document.querySelector("#pauseButton") != null){
-		const pause = document.querySelector("#pauseButton");
-		
-		pause.onclick = (event) =>{
-			timerOn = false;
-			rhit.pauseTimer();
-
-			const animation = document.querySelector(".timerCircle");
-			animation.style.animationPlayState = "paused";
-			document.querySelector("#startButton").style.display = "inline";
-			document.querySelector("#pauseButton").style.display = "none";
-
 		}
-		
-		//pause.removeEventListener("click", clickListen );
-	}
+		if (document.querySelector("#startButton") != null) {
+			document.querySelector("#startButton").onclick = (event) => {
 
-	document.querySelector("#logoutButton").addEventListener("click", (event) => {
-		rhit.fbAuthManager.signOut();
-	});
+				timerOn = true;
+				rhit.startTimer();
+				document.querySelector("#startButton").style.display = "none";
+				document.querySelector("#pauseButton").style.display = "inline";
+				const animation = document.querySelector(".timerCircle");
+				animation.style.animationPlayState = "running";
+
+
+			};
+		}
+		if (document.querySelector("#stopButton") != null) {
+			document.querySelector("#stopButton").onclick = (event) => {
+				timerOn = false;
+				rhit.stopTimer();
+				const animation = document.querySelector(".timerCircle");
+				animation.style.animationPlayState = "paused";
+
+				var newone = animation.cloneNode(true);
+				animation.parentNode.replaceChild(newone, animation);
+
+				document.querySelector("#startButton").style.display = "inline";
+				document.querySelector("#pauseButton").style.display = "none";
+
+
+			};
+		}
+
+		if (document.querySelector("#pauseButton") != null) {
+			const pause = document.querySelector("#pauseButton");
+
+			pause.onclick = (event) => {
+				timerOn = false;
+				rhit.pauseTimer();
+
+				const animation = document.querySelector(".timerCircle");
+				animation.style.animationPlayState = "paused";
+				document.querySelector("#startButton").style.display = "inline";
+				document.querySelector("#pauseButton").style.display = "none";
+
+			}
+
+			//pause.removeEventListener("click", clickListen );
+		}
+		if (document.querySelector("logoutButton") != null) {
+			document.querySelector("#logoutButton").addEventListener("click", (event) => {
+				rhit.fbAuthManager.signOut();
+			});
+		}
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 	}
@@ -125,7 +132,7 @@ if(document.querySelector("#pauseButton") != null){
 	  </div>`);
 	}
 	updateList() {
-		
+
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
@@ -134,18 +141,18 @@ if(document.querySelector("#pauseButton") != null){
 
 
 			newCard.onclick = (event) => {
-				
+
 				window.location.href = `/task.html?id=${task.id}`;
 
 			}
 			newList.appendChild(newCard);
 
 		}
-	
+
 		const oldList = document.querySelector("#cardsContainer");
 		oldList.removeAttribute("id");
 		oldList.hidden = true;
-	
+
 		oldList.parentElement.appendChild(newList);
 
 	}
@@ -159,37 +166,39 @@ rhit.FbTasksManager = class {
 		this._unsubscribe = null;
 	}
 	add(name, date, desc) {
-		
+
 		// console.log("adding a task");
 		// console.log(this._ref);
 		// console.log("doc is" ,this._ref.doc(
 		// 	"QWntQBCrRe0XISA9RPt4"));
 
 		this._ref.add({
-				
-				//trouble with adding to firebase
-					[rhit.FB_KEY_NAME]: name,
-					[rhit.FB_KEY_AUTHOR] : rhit.fbAuthManager.uid,
-					[rhit.FB_KEY_DUE_DATE]: date,
-					[rhit.FB_KEY_DATE_CREATED]:firebase.firestore.Timestamp.now(),
-					[rhit.FB_KEY_DESC]: desc,
-				})
-				.then(function (docRef) {
-					console.log("Document written with ID: ", docRef.id);
-				})
-				.catch(function (error) {
-					console.error("Error adding document: ", error);
-				})
 
-				setTimeout(() => { console.log("stop!"); }, 2000);
-				
-			console.log("task added");
+				//trouble with adding to firebase
+				[rhit.FB_KEY_NAME]: name,
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_DUE_DATE]: date,
+				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_DESC]: desc,
+			})
+			.then(function (docRef) {
+				console.log("Document written with ID: ", docRef.id);
+			})
+			.catch(function (error) {
+				console.error("Error adding document: ", error);
+			})
+
+		setTimeout(() => {
+			console.log("stop!");
+		}, 2000);
+
+		console.log("task added");
 	}
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(rhit.FB_KEY_DATE_CREATED, "desc").limit(50);
 		if (this._uid) {
-				query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
 		}
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
@@ -200,7 +209,7 @@ rhit.FbTasksManager = class {
 	stopListening() {
 		this._unsubscribe();
 	}
-	
+
 	get length() {
 		return this._documentSnapshots.length;
 	}
@@ -282,11 +291,11 @@ rhit.FbSingleTaskManager = class {
 
 	update(name, date, desc) {
 		this._ref.update({
-			[rhit.FB_KEY_NAME]: name,
-			[rhit.FB_KEY_AUTHOR] : rhit.fbAuthManager.uid,
-			[rhit.FB_KEY_DUE_DATE]: date,
-			[rhit.FB_KEY_DATE_CREATED]:firebase.firestore.Timestamp.now(),
-			[rhit.FB_KEY_DESC]: desc,
+				[rhit.FB_KEY_NAME]: name,
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_DUE_DATE]: date,
+				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_DESC]: desc,
 			})
 			.then(() => {
 				console.log("Document successfully updated!");
@@ -316,7 +325,7 @@ rhit.FbSingleTaskManager = class {
 	}
 }
 
-rhit.Task= class {
+rhit.Task = class {
 	constructor(id, name, date) {
 		this.id = id;
 		this.name = name;
@@ -345,7 +354,7 @@ rhit.pauseTimer = function () {
 rhit.startTimer = function () {
 	//timer
 
-	
+
 	var countdownNumberEl = document.getElementById('countdown-number');
 
 
@@ -449,7 +458,7 @@ rhit.FbAuthManager = class {
 		return this._user.uid;
 	}
 }
-rhit.checkForRedirects = function() {
+rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
 		window.location.href = "/main.html";
 	}
@@ -458,7 +467,7 @@ rhit.checkForRedirects = function() {
 	}
 };
 
-rhit.initializePage = function() {
+rhit.initializePage = function () {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (document.querySelector("#mainPage")) {
 		console.log("You are on the main page.");
@@ -505,8 +514,8 @@ rhit.main = function () {
 		rhit.checkForRedirects();
 		rhit.initializePage();
 	});
-	
-	
+
+
 
 
 
