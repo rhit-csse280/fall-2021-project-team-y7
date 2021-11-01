@@ -23,7 +23,7 @@ rhit.ListPageController = class {
 	constructor() {
 
 		if(document.querySelector("#addTaskButton") != null){
-		document.querySelector("#addTaskButton").addEventListener("click", (event) => {
+		document.querySelector("#addTaskButton").onclick = (event) => {
 			
 
 			document.location.href = "./addTask.html"
@@ -37,23 +37,23 @@ rhit.ListPageController = class {
 		// </div> </div>`);
 		// 	list.appendChild(card);
 
-		});
+		};
 	}
 		if(document.querySelector("#addButton") != null){
-		document.querySelector("#addButton").addEventListener("click", (event) => {
+		document.querySelector("#addButton").onclick =  (event) => {
 			const name = document.querySelector("#taskName").value;
 			const date = document.querySelector("#dueDate").value;
 			const desc = document.querySelector("#desc").value;
 			console.log("called add");
 			rhit.fbTasksManager.add(name, date, desc);
 			
-		});
+		};
 	}
 		if(document.querySelector("#returnButton") != null){
-			document.querySelector("#returnButton").addEventListener("click", (event) => {
+			document.querySelector("#returnButton").onclick = (event) => {
 				document.location.href = "index.html";
 				
-			});
+			};
 	}	
 	if(document.querySelector("#startButton") != null){
 		document.querySelector("#startButton").onclick =  (event) => {
@@ -69,7 +69,7 @@ rhit.ListPageController = class {
 		};
 	}
 	if(document.querySelector("#stopButton") != null){
-		document.querySelector("#stopButton").addEventListener("click", (event) => {
+		document.querySelector("#stopButton").onclick = (event) => {
 			timerOn = false;
 			rhit.stopTimer();
 			const animation = document.querySelector(".timerCircle");
@@ -82,7 +82,7 @@ rhit.ListPageController = class {
 			document.querySelector("#pauseButton").style.display = "none";
 
 
-		});
+		};
 	}
 
 if(document.querySelector("#pauseButton") != null){
