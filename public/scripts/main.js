@@ -5,8 +5,8 @@ rhit.FB_KEY_DUE_DATE = "Due Date";
 rhit.FB_KEY_DESC = "Description";
 rhit.FB_KEY_DATE_CREATED= "Date Created";
 
-var countdown = 25;
-var secCountdown = 00;
+var countdown = 24;
+var secCountdown = 59;
 var timerOn = false;
 var countMin = null;
 var countSec = null;
@@ -86,7 +86,10 @@ rhit.ListPageController = class {
 	}
 
 if(document.querySelector("#pauseButton") != null){
-		document.querySelector("#pauseButton").addEventListener("click", (event) => {
+		const pause = document.querySelector("#pauseButton");
+		
+
+		pause.addEventListener("click", (event) => {
 			timerOn = false;
 			rhit.pauseTimer();
 
@@ -98,6 +101,7 @@ if(document.querySelector("#pauseButton") != null){
 			document.querySelector("#pauseButton").style.display = "none";
 
 		});
+		pause.removeEventListener();
 	}
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
