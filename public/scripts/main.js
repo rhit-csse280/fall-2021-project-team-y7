@@ -102,6 +102,14 @@ if(document.querySelector("#pauseButton") != null){
 		//pause.removeEventListener("click", clickListen );
 	}
 
+	if(document.querySelector("#logoutButton") != null){
+		
+		const logout = document.querySelector("#logoutButton");
+		console.log("logout button exists");
+		
+		// logout.onclick = rhit.fbAuthManager.signOut();
+	}
+
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 	}
 	_createCard(task) {
@@ -272,27 +280,119 @@ rhit.startTimer = function () {
 	// end timer
 }
 
+
+rhit.LoginPageController = class {
+	constructor() {
+		document.querySelector("#roseFireButton").onclick = (event) => {
+			rhit.fbAuthManager.signIn();
+		};
+	}
+}
+rhit.FbAuthManager = class {
+	constructor() {
+		this._user = null;
+	}
+
+	beginListening(changeListener) {
+		firebase.auth().onAuthStateChanged((user) => {
+			this._user = user;
+			changeListener();
+		});
+	}
+
+	signIn() {
+		console.log("Sign in using Rosefire");
+		Rosefire.signIn("dfbc3abf-4ecb-4d15-b2ae-2bf0b169ecbc", (err, rfUser) => {
+			if (err) {
+				console.log("Rosefire error!", err);
+				return;
+			}
+			console.log("Rosefire success!", rfUser);
+			firebase.auth().signInWithCustomToken(rfUser.token).catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				if (errorCode === 'auth/invalid-custom-token') {
+					alert('The token you provided is not valid.');
+				} else {
+					console.error("Custom auth error", errorCode, errorMessage);
+				}
+			});
+		});
+
+	}
+
+	signOut() {
+		firebase.auth().signOut().catch((error) => {
+			console.log("Sign out error");
+		});
+	}
+
+	get isSignedIn() {
+		return !!this._user;
+	}
+
+	get uid() {
+		return this._user.uid;
+	}
+}
+rhit.checkForRedirects = function() {
+	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
+		window.location.href = "/main.html";
+	}
+	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn) {
+		window.location.href = "/";
+	}
+};
+
+rhit.initializePage = function() {
+	const urlParams = new URLSearchParams(window.location.search);
+	if (document.querySelector("#mainPage")) {
+		console.log("You are on the main page.");
+		const uid = urlParams.get("uid");
+		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
+		new rhit.ListPageController();
+		$("#evoCalendar").evoCalendar({
+			todayHighlight: true,
+			sidebarDisplayDefault: true,
+			sidebarToggler: false,
+			eventDisplayDefault: false,
+			eventListToggler: false,
+			calendarEvents: [{
+				id: 'bHay68s', // Event's ID (required)
+				name: "Task 1", // Event name (required)
+				date: "October/12/2021", // Event date (required)
+				type: "event", // Event type (required)
+				everyYear: false // Same event every year (optional)
+			}]
+		});
+	}
+	if (document.querySelector("#detailPage")) {
+		// console.log("You are on the detail page.");
+		// const movieQuoteId = urlParams.get("id");
+		// if (!movieQuoteId) {
+		// 	window.location.href = "/";
+		// }
+		// rhit.fbSingleTaskManager = new rhit.FbSingleTaskManager(movieQuoteId);
+		// new rhit.DetailPageController();
+	}
+	if (document.querySelector("#loginPage")) {
+		console.log("You are on the login page.");
+		new rhit.LoginPageController();
+	}
+};
+
+
+
 rhit.main = function () {
 	console.log("Ready");
-	if (document.querySelector("#mainPage")) {
-		rhit.fbTasksManager = new rhit.FbTasksManager();
-		new rhit.ListPageController();
-	}
-	new rhit.ListPageController();
-	$("#evoCalendar").evoCalendar({
-		todayHighlight: true,
-		sidebarDisplayDefault: true,
-		sidebarToggler: false,
-		eventDisplayDefault: false,
-		eventListToggler: false,
-		calendarEvents: [{
-			id: 'bHay68s', // Event's ID (required)
-			name: "Task 1", // Event name (required)
-			date: "October/12/2021", // Event date (required)
-			type: "event", // Event type (required)
-			everyYear: false // Same event every year (optional)
-		}]
+	rhit.fbAuthManager = new rhit.FbAuthManager();
+	rhit.fbAuthManager.beginListening(() => {
+		console.log("isSignedIn = ", rhit.fbAuthManager.isSignedIn);
+		rhit.checkForRedirects();
+		rhit.initializePage();
 	});
+	
+	
 
 
 
