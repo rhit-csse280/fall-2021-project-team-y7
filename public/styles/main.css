@@ -155,7 +155,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   .timerbtn{
     font-size: 2rem;
   }
-#bigTrophy{
+#bigTrophy, .trophy{
   width:100px;
   height:auto;
   display: block;

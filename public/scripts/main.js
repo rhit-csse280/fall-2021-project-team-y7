@@ -40,6 +40,12 @@ rhit.ListPageController = class {
 
 		};
 	}
+	if(document.querySelector("#trophiesButton") != null){
+		document.querySelector("#trophiesButton").onclick =  (event) => {
+			document.location.href = "trophies.html";
+			
+		};
+	}
 		if(document.querySelector("#addButton") != null){
 		document.querySelector("#addButton").onclick =  (event) => {
 			const name = document.querySelector("#taskName").value;
