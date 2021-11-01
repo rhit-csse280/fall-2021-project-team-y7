@@ -26,6 +26,21 @@ function htmlToElement(html) {
 
 rhit.ListPageController = class {
 	constructor() {
+		console.log("creating list page controller");
+		console.log("hello!");
+		console.log(document.querySelector("#logoutButton") + "logoutButon");
+		if (document.querySelector("#logoutButton") != null) {
+			console.log("logout button exists");
+			document.querySelector("#logoutButton").addEventListener("click", (event) => {
+				console.log("clicked logout");
+				rhit.fbAuthManager.signOut();
+			
+			});
+		}
+
+		document.querySelector("#logoutButton").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
 
 		if (document.querySelector("#addTaskButton") != null) {
 			document.querySelector("#addTaskButton").onclick = (event) => {
@@ -116,11 +131,8 @@ rhit.ListPageController = class {
 
 			//pause.removeEventListener("click", clickListen );
 		}
-		if (document.querySelector("logoutButton") != null) {
-			document.querySelector("#logoutButton").addEventListener("click", (event) => {
-				rhit.fbAuthManager.signOut();
-			});
-		}
+
+		
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
@@ -710,10 +722,12 @@ rhit.initializePage = function () {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (document.querySelector("#mainPage")) {
 		console.log("You are on the main page.");
+		console.log("yee");
 		const uid = urlParams.get("uid");
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		new rhit.ListPageController();
+		console.log("called new list page");
 		$("#evoCalendar").evoCalendar({
 			todayHighlight: true,
 			sidebarDisplayDefault: true,
