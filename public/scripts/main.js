@@ -56,7 +56,7 @@ rhit.ListPageController = class {
 			});
 	}	
 	if(document.querySelector("#startButton") != null){
-		document.querySelector("#startButton").addEventListener("click", (event) => {
+		document.querySelector("#startButton").onclick =  (event) => {
 
 			timerOn = true;
 			rhit.startTimer();
@@ -66,7 +66,7 @@ rhit.ListPageController = class {
 			animation.style.animationPlayState = "running";
 
 
-		});
+		};
 	}
 	if(document.querySelector("#stopButton") != null){
 		document.querySelector("#stopButton").addEventListener("click", (event) => {
@@ -88,20 +88,18 @@ rhit.ListPageController = class {
 if(document.querySelector("#pauseButton") != null){
 		const pause = document.querySelector("#pauseButton");
 		
-
-		pause.addEventListener("click", (event) => {
+		pause.onclick = (event) =>{
 			timerOn = false;
 			rhit.pauseTimer();
 
 			const animation = document.querySelector(".timerCircle");
 			animation.style.animationPlayState = "paused";
-			
-
 			document.querySelector("#startButton").style.display = "inline";
 			document.querySelector("#pauseButton").style.display = "none";
 
-		});
-		pause.removeEventListener();
+		}
+		
+		//pause.removeEventListener("click", clickListen );
 	}
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
