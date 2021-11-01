@@ -172,7 +172,7 @@ rhit.ListPageController = class {
 
 			newCard.onclick = (event) => {
 
-				window.location.href = `/task.html?id=${task.id}`;
+				window.location.href = `/subtask.html?id=${subtask.id}`;
 
 			}
 			newList.appendChild(newCard);
@@ -248,7 +248,7 @@ rhit.FbTasksManager = class {
 }
 rhit.FbSubTasksManager = class {
 	constructor(uid) {
-		console.log("created tasks manager");
+		console.log("created subtasks manager");
 		this._uid = uid;
 		this._documentSnapshots = [];
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_SUBTASKS);
@@ -335,8 +335,19 @@ rhit.DetailPageController = class {
 				console.error("Error removing document: ", error);
 			});
 		});
-
+		rhit.fbSubTasksManager.beginListening(this.updateView.bind(this));
 		rhit.fbSingleTaskManager.beginListening(this.updateView.bind(this));
+	}
+	_createSubCard(subtask) {
+		return htmlToElement(`<div class="card" style = "background-color: #b19cd9">
+		<div class="card-body">
+		  <input type="checkbox">
+		  <h5 class="card-title"> ${subtask.name}</h5>
+		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
+		  <br>
+		  <h6 class="card-subtitle mb2 ">Parent: ${subtask.parent}</h6>
+		</div>
+	  </div>`);
 	}
 	updateView() {
 		document.querySelector("#cardName").innerHTML = rhit.fbSingleTaskManager.name;
@@ -346,11 +357,82 @@ rhit.DetailPageController = class {
 			document.querySelector("#menuEdit").style.display = "flex";
 			document.querySelector("#menuDelete").style.display = "flex";
 		}
+		const newList = htmlToElement('<div id = "cardsContainer"></div>');
+
+
+		
+		console.log("length" + rhit.fbSubTasksManager.length);
+
+		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
+			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
+			console.log("parent" + subtask.parent);
+			console.log("task " + rhit.fbSingleTaskManager.name);
+			if(subtask.parent== rhit.fbSingleTaskManager.name){}
+			const newCard = this._createSubCard(subtask);
+			
+			newCard.onclick = (event) => {
+
+				window.location.href = `/subtask.html?id=${subtask.id}`;
+
+			}
+			newList.appendChild(newCard);
+		}
+
+		
+
+
+		const oldList = document.querySelector("#cardsContainer");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+
+		oldList.parentElement.appendChild(newList);
+
+	
+		
+	}
+}
+rhit.SubDetailPageController = class {
+	constructor() {
+		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
+		
+
+		$("#editQuoteDialog").on("show.bs.modal", (event) => {
+			// Pre animation
+			document.querySelector("#inputQuote").value = rhit.fbSingleQuoteManager.quote;
+			document.querySelector("#inputMovie").value = rhit.fbSingleQuoteManager.movie;
+		});
+		$("#editQuoteDialog").on("shown.bs.modal", (event) => {
+			// Post animation
+			document.querySelector("#inputQuote").focus();
+		});
+
+		document.querySelector("#submitDeleteQuote").addEventListener("click", (event) => {
+			rhit.fbSingleSubTaskManager.delete().then(function () {
+				console.log("Document successfully deleted!");
+				window.location.href = "/main.html";
+			}).catch(function (error) {
+				console.error("Error removing document: ", error);
+			});
+		});
+
+		rhit.fbSingleSubTaskManager.beginListening(this.updateView.bind(this));
+	}
+	updateView() {
+		document.querySelector("#cardName").innerHTML = rhit.fbSingleSubTaskManager.name;
+		document.querySelector("#cardDate").innerHTML = rhit.fbSingleSubTaskManager.date;
+		document.querySelector("#cardDesc").innerHTML = rhit.fbSingleSubTaskManager.desc;
+		document.querySelector("#cardParent").innerHTML = "Parent: " + rhit.fbSingleSubTaskManager.parent;
+		if (rhit.fbSingleSubTaskManager.author == rhit.fbAuthManager.uid) {
+			document.querySelector("#menuEdit").style.display = "flex";
+			document.querySelector("#menuDelete").style.display = "flex";
+		}
 	}
 }
 rhit.FbSingleTaskManager = class {
 	constructor(taskId) {
-		this._documentSnapshot = {};
+		this._documentSnapshot = [];
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TASKS).doc(taskId);
 	}
@@ -395,6 +477,7 @@ rhit.FbSingleTaskManager = class {
 	}
 
 	get name() {
+		
 		return this._documentSnapshot.get(rhit.FB_KEY_NAME);
 	}
 	get desc() {
@@ -410,7 +493,8 @@ rhit.FbSingleTaskManager = class {
 }
 rhit.FbSingleSubTaskManager = class {
 	constructor(subtaskId) {
-		this._documentSnapshot = {};
+		console.log(subtaskId);
+		this._documentSnapshot = [];
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_SUBTASKS).doc(subtaskId);
 	}
@@ -651,9 +735,21 @@ rhit.initializePage = function () {
 		if (!taskId) {
 			window.location.href = "/";
 		}
+		const uid = urlParams.get("uid");
+		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		rhit.fbSingleTaskManager = new rhit.FbSingleTaskManager(taskId);
 		new rhit.DetailPageController();
 	}
+	if (document.querySelector("#subDetailPage")) {
+		console.log("You are on the subtask detail page.");
+		const taskId = urlParams.get("id");
+		if (!taskId) {
+			window.location.href = "/";
+		}
+		rhit.fbSingleSubTaskManager = new rhit.FbSingleSubTaskManager(taskId);
+		new rhit.SubDetailPageController();
+	}
+
 	if (document.querySelector("#loginPage")) {
 		console.log("You are on the login page.");
 		new rhit.LoginPageController();
