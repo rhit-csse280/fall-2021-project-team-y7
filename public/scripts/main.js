@@ -7,6 +7,8 @@ rhit.FB_KEY_AUTHOR = "Author";
 rhit.FB_KEY_DUE_DATE = "Due Date";
 rhit.FB_KEY_DESC = "Description";
 rhit.FB_KEY_DATE_CREATED = "Date Created";
+rhit.FB_COLLECTION_SUBTASKS = "SubTasks";
+rhit.FB_KEY_PARENT = "Parent";
 
 var countdown = 24;
 var secCountdown = 59;
@@ -121,6 +123,7 @@ rhit.ListPageController = class {
 		}
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
+		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
 	}
 	_createCard(task) {
 		return htmlToElement(`<div class="card">
@@ -131,9 +134,22 @@ rhit.ListPageController = class {
 		</div>
 	  </div>`);
 	}
+	_createSubCard(subtask) {
+		return htmlToElement(`<div class="card" style = "background-color: #b19cd9">
+		<div class="card-body">
+		  <input type="checkbox">
+		  <h5 class="card-title"> ${subtask.name}</h5>
+		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
+		  <br>
+		  <h6 class="card-subtitle mb2 ">Parent: ${subtask.parent}</h6>
+		</div>
+	  </div>`);
+	}
+
 	updateList() {
 
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
+
 
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
 			const task = rhit.fbTasksManager.getTaskAtIndex(i);
@@ -148,6 +164,21 @@ rhit.ListPageController = class {
 			newList.appendChild(newCard);
 
 		}
+		console.log(rhit.fbSubTasksManager.length);
+		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
+			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
+			const newCard = this._createSubCard(subtask);
+			console.log("subtask gotten", subtask);
+
+			newCard.onclick = (event) => {
+
+				window.location.href = `/task.html?id=${task.id}`;
+
+			}
+			newList.appendChild(newCard);
+
+		}
+
 
 		const oldList = document.querySelector("#cardsContainer");
 		oldList.removeAttribute("id");
@@ -167,14 +198,8 @@ rhit.FbTasksManager = class {
 	}
 	add(name, date, desc) {
 
-		// console.log("adding a task");
-		// console.log(this._ref);
-		// console.log("doc is" ,this._ref.doc(
-		// 	"QWntQBCrRe0XISA9RPt4"));
-
 		this._ref.add({
 
-				//trouble with adding to firebase
 				[rhit.FB_KEY_NAME]: name,
 				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 				[rhit.FB_KEY_DUE_DATE]: date,
@@ -221,7 +246,66 @@ rhit.FbTasksManager = class {
 		return task;
 	}
 }
+rhit.FbSubTasksManager = class {
+	constructor(uid) {
+		console.log("created tasks manager");
+		this._uid = uid;
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_SUBTASKS);
+		this._unsubscribe = null;
+	}
+	add(name, date, desc, pid) {
 
+		this._ref.add({
+
+				//trouble with adding to firebase
+				[rhit.FB_KEY_NAME]: name,
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_DUE_DATE]: date,
+				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_DESC]: desc,
+				[rhit.FB_KEY_PARENT] : pid,
+			})
+			.then(function (docRef) {
+				console.log("Document written with ID: ", docRef.id);
+			})
+			.catch(function (error) {
+				console.error("Error adding document: ", error);
+			})
+
+		setTimeout(() => {
+			console.log("stop!");
+		}, 2000);
+
+		console.log("subtask added");
+	}
+	beginListening(changeListener) {
+
+		let query = this._ref.orderBy(rhit.FB_KEY_DATE_CREATED, "desc").limit(50);
+		if (this._uid) {
+			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+		}
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+
+		});
+	}
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
+	}
+	getSubTaskAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const task = new rhit.SubTask(docSnapshot.id,
+			docSnapshot.get(rhit.FB_KEY_NAME),
+			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT));
+		return task;
+	}
+}
 rhit.DetailPageController = class {
 	constructor() {
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
@@ -324,12 +408,84 @@ rhit.FbSingleTaskManager = class {
 		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
 	}
 }
+rhit.FbSingleSubTaskManager = class {
+	constructor(subtaskId) {
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_SUBTASKS).doc(subtaskId);
+	}
 
+	beginListening(changeListener) {
+		this._unsubscribe = this._ref.onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Document data:", doc.data());
+				this._documentSnapshot = doc;
+				changeListener();
+			} else {
+				// doc.data() will be undefined in this case
+				console.log("No such document!");
+				//window.location.href = "/";
+			}
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	update(name, date, desc, parentId) {
+		this._ref.update({
+				[rhit.FB_KEY_NAME]: name,
+				[rhit.FB_KEY_PARENT]: parentId,
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_DUE_DATE]: date,
+				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_DESC]: desc,
+			})
+			.then(() => {
+				console.log("Document successfully updated!");
+			})
+			.catch(function (error) {
+				// The document probably doesn't exist.
+				console.error("Error updating document: ", error);
+			});
+	}
+
+	delete() {
+		return this._ref.delete();
+	}
+
+	get name() {
+		return this._documentSnapshot.get(rhit.FB_KEY_NAME);
+	}
+	get desc() {
+		return this._documentSnapshot.get(rhit.FB_KEY_DESC);
+	}
+	get date() {
+		return this._documentSnapshot.get(rhit.FB_KEY_DUE_DATE);
+	}
+
+	get author() {
+		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
+	}
+	get parent(){
+		return this._documentSnapshot.get(rhit.FB_KEY_PARENT);
+	}
+}
 rhit.Task = class {
 	constructor(id, name, date) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
+	}
+}
+
+rhit.SubTask = class{
+	constructor(id, name, date, pId) {
+		this.id = id;
+		this.name = name;
+		this.date = date;
+		this.parent = pId;
 	}
 }
 rhit.stopTimer = function () {
@@ -403,7 +559,6 @@ rhit.startTimer = function () {
 	// end timer
 }
 
-
 rhit.LoginPageController = class {
 	constructor() {
 		document.querySelector("#roseFireButton").onclick = (event) => {
@@ -473,6 +628,7 @@ rhit.initializePage = function () {
 		console.log("You are on the main page.");
 		const uid = urlParams.get("uid");
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
+		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		new rhit.ListPageController();
 		$("#evoCalendar").evoCalendar({
 			todayHighlight: true,
