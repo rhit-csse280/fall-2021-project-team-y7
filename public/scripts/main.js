@@ -1,6 +1,7 @@
 var rhit = rhit || {};
 rhit.FB_COLLECTION_TASKS = "Tasks";
 rhit.FB_KEY_NAME = "Name";
+rhit.FB_KEY_AUTHOR = "Author";
 rhit.FB_KEY_DUE_DATE = "Due Date";
 rhit.FB_KEY_DESC = "Description";
 rhit.FB_KEY_DATE_CREATED= "Date Created";
@@ -106,7 +107,7 @@ if(document.querySelector("#pauseButton") != null){
 		
 		const logout = document.querySelector("#logoutButton");
 		console.log("logout button exists");
-		
+
 		// logout.onclick = rhit.fbAuthManager.signOut();
 	}
 
@@ -132,7 +133,7 @@ if(document.querySelector("#pauseButton") != null){
 
 			newCard.onclick = (event) => {
 				
-			//	window.location.href = `/task.html?id=${task.id}`;
+				window.location.href = `/task.html?id=${task.id}`;
 
 			}
 			newList.appendChild(newCard);
@@ -148,8 +149,9 @@ if(document.querySelector("#pauseButton") != null){
 	}
 }
 rhit.FbTasksManager = class {
-	constructor() {
+	constructor(uid) {
 		console.log("created tasks manager");
+		this._uid = uid;
 		this._documentSnapshots = [];
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TASKS);
 		this._unsubscribe = null;
@@ -165,6 +167,7 @@ rhit.FbTasksManager = class {
 				
 				//trouble with adding to firebase
 					[rhit.FB_KEY_NAME]: name,
+					[rhit.FB_KEY_AUTHOR] : rhit.fbAuthManager.uid,
 					[rhit.FB_KEY_DUE_DATE]: date,
 					[rhit.FB_KEY_DATE_CREATED]:firebase.firestore.Timestamp.now(),
 					[rhit.FB_KEY_DESC]: desc,
@@ -181,7 +184,12 @@ rhit.FbTasksManager = class {
 			console.log("task added");
 	}
 	beginListening(changeListener) {
-		this._unsubscribe = this._ref.orderBy("Date Created", "desc").limit(50).onSnapshot((querySnapshot) => {
+
+		let query = this._ref.orderBy(rhit.FB_KEY_DATE_CREATED, "desc").limit(50);
+		if (this._uid) {
+				query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+		}
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 
@@ -202,6 +210,110 @@ rhit.FbTasksManager = class {
 		return task;
 	}
 }
+
+rhit.DetailPageController = class {
+	constructor() {
+		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
+		document.querySelector("#submitEditQuote").addEventListener("click", (event) => {
+			const quote = document.querySelector("#inputQuote").value;
+			const movie = document.querySelector("#inputMovie").value;
+			rhit.fbSingleQuoteManager.update(quote, movie);
+		});
+
+		$("#editQuoteDialog").on("show.bs.modal", (event) => {
+			// Pre animation
+			document.querySelector("#inputQuote").value = rhit.fbSingleQuoteManager.quote;
+			document.querySelector("#inputMovie").value = rhit.fbSingleQuoteManager.movie;
+		});
+		$("#editQuoteDialog").on("shown.bs.modal", (event) => {
+			// Post animation
+			document.querySelector("#inputQuote").focus();
+		});
+
+		document.querySelector("#submitDeleteQuote").addEventListener("click", (event) => {
+			rhit.fbSingleTaskManager.delete().then(function () {
+				console.log("Document successfully deleted!");
+				window.location.href = "/main.html";
+			}).catch(function (error) {
+				console.error("Error removing document: ", error);
+			});
+		});
+
+		rhit.fbSingleTaskManager.beginListening(this.updateView.bind(this));
+	}
+	updateView() {
+		document.querySelector("#cardName").innerHTML = rhit.fbSingleTaskManager.name;
+		document.querySelector("#cardDate").innerHTML = rhit.fbSingleTaskManager.date;
+		document.querySelector("#cardDesc").innerHTML = rhit.fbSingleTaskManager.desc;
+		if (rhit.fbSingleTaskManager.author == rhit.fbAuthManager.uid) {
+			document.querySelector("#menuEdit").style.display = "flex";
+			document.querySelector("#menuDelete").style.display = "flex";
+		}
+	}
+}
+rhit.FbSingleTaskManager = class {
+	constructor(taskId) {
+		this._documentSnapshot = {};
+		this._unsubscribe = null;
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TASKS).doc(taskId);
+	}
+
+	beginListening(changeListener) {
+		this._unsubscribe = this._ref.onSnapshot((doc) => {
+			if (doc.exists) {
+				console.log("Document data:", doc.data());
+				this._documentSnapshot = doc;
+				changeListener();
+			} else {
+				// doc.data() will be undefined in this case
+				console.log("No such document!");
+				//window.location.href = "/";
+			}
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	update(name, date, desc) {
+		this._ref.update({
+			[rhit.FB_KEY_NAME]: name,
+			[rhit.FB_KEY_AUTHOR] : rhit.fbAuthManager.uid,
+			[rhit.FB_KEY_DUE_DATE]: date,
+			[rhit.FB_KEY_DATE_CREATED]:firebase.firestore.Timestamp.now(),
+			[rhit.FB_KEY_DESC]: desc,
+			})
+			.then(() => {
+				console.log("Document successfully updated!");
+			})
+			.catch(function (error) {
+				// The document probably doesn't exist.
+				console.error("Error updating document: ", error);
+			});
+	}
+
+	delete() {
+		return this._ref.delete();
+	}
+
+	get name() {
+		return this._documentSnapshot.get(rhit.FB_KEY_NAME);
+	}
+	get desc() {
+		return this._documentSnapshot.get(rhit.FB_KEY_DESC);
+	}
+	get date() {
+		return this._documentSnapshot.get(rhit.FB_KEY_DUE_DATE);
+	}
+
+	get author() {
+		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
+	}
+}
+
 rhit.Task= class {
 	constructor(id, name, date) {
 		this.id = id;
@@ -367,13 +479,13 @@ rhit.initializePage = function() {
 		});
 	}
 	if (document.querySelector("#detailPage")) {
-		// console.log("You are on the detail page.");
-		// const movieQuoteId = urlParams.get("id");
-		// if (!movieQuoteId) {
-		// 	window.location.href = "/";
-		// }
-		// rhit.fbSingleTaskManager = new rhit.FbSingleTaskManager(movieQuoteId);
-		// new rhit.DetailPageController();
+		console.log("You are on the detail page.");
+		const taskId = urlParams.get("id");
+		if (!taskId) {
+			window.location.href = "/";
+		}
+		rhit.fbSingleTaskManager = new rhit.FbSingleTaskManager(taskId);
+		new rhit.DetailPageController();
 	}
 	if (document.querySelector("#loginPage")) {
 		console.log("You are on the login page.");
