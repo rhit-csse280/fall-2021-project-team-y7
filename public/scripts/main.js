@@ -132,10 +132,20 @@ rhit.ListPageController = class {
 			//pause.removeEventListener("click", clickListen );
 		}
 
+
+		//create calendar
+		$("#evoCalendar").evoCalendar({
+			todayHighlight: true,
+			sidebarDisplayDefault: true,
+			sidebarToggler: false,
+			eventDisplayDefault: false,
+			eventListToggler: false
+		});
 		
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
+		
 	}
 	_createCard(task) {
 		return htmlToElement(`<div class="card">
@@ -162,6 +172,8 @@ rhit.ListPageController = class {
 
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
+		// destroy calendar
+		//$('#evoCalendar').evoCalendar('destroy');
 
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
 			const task = rhit.fbTasksManager.getTaskAtIndex(i);
@@ -174,6 +186,14 @@ rhit.ListPageController = class {
 
 			}
 			newList.appendChild(newCard);
+
+			$('#evoCalendar').evoCalendar('addCalendarEvent', {
+				     id: task.id,
+				     name: task.name,
+				     description: task.description,
+				     date: task.date,
+				     type: 'event'
+				});
 
 		}
 		console.log(rhit.fbSubTasksManager.length);
@@ -188,6 +208,14 @@ rhit.ListPageController = class {
 
 			}
 			newList.appendChild(newCard);
+
+			$('#evoCalendar').evoCalendar('addCalendarEvent', {
+				     id: subtask.id,
+				     name: subtask.name,
+				     description: subtask.description,
+				     date: subtask.date,
+				     type: 'event'
+				});
 
 		}
 
@@ -318,6 +346,7 @@ rhit.FbSubTasksManager = class {
 		return task;
 	}
 }
+
 rhit.DetailPageController = class {
 	constructor() {
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
@@ -728,20 +757,6 @@ rhit.initializePage = function () {
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		new rhit.ListPageController();
 		console.log("called new list page");
-		$("#evoCalendar").evoCalendar({
-			todayHighlight: true,
-			sidebarDisplayDefault: true,
-			sidebarToggler: false,
-			eventDisplayDefault: false,
-			eventListToggler: false,
-			calendarEvents: [{
-				id: 'bHay68s', // Event's ID (required)
-				name: "Task 1", // Event name (required)
-				date: "October/12/2021", // Event date (required)
-				type: "event", // Event type (required)
-				everyYear: false // Same event every year (optional)
-			}]
-		});
 	}
 	if (document.querySelector("#detailPage")) {
 		console.log("You are on the detail page.");
