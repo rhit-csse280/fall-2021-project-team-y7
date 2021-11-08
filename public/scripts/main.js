@@ -34,7 +34,7 @@ rhit.ListPageController = class {
 			document.querySelector("#logoutButton").addEventListener("click", (event) => {
 				console.log("clicked logout");
 				rhit.fbAuthManager.signOut();
-			
+
 			});
 		}
 
@@ -141,25 +141,25 @@ rhit.ListPageController = class {
 			eventDisplayDefault: false,
 			eventListToggler: false
 		});
-		
+
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
-		
+
 	}
 	_createCard(task) {
-		return htmlToElement(`<div class="card">
+		return htmlToElement(`<div  class="card">
 		<div class="card-body">
-		  <input type="checkbox">
+		  <input id = "t-${task.id}" type="checkbox">
 		  <h5 class="card-title"> ${task.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${task.date}</h6>
 		</div>
 	  </div>`);
 	}
 	_createSubCard(subtask) {
-		return htmlToElement(`<div class="card" style = "background-color: #b19cd9">
+		return htmlToElement(`<div  class="card" style = "background-color: #b19cd9">
 		<div class="card-body">
-		  <input type="checkbox">
+		  <input id = "st-${subtask.id}" type="checkbox">
 		  <h5 class="card-title"> ${subtask.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
 		  <br>
@@ -170,6 +170,7 @@ rhit.ListPageController = class {
 
 	updateList() {
 
+		const checkBoxes = document.querySelectorAll("input");
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
 		// destroy calendar
@@ -181,21 +182,22 @@ rhit.ListPageController = class {
 
 
 			newCard.onclick = (event) => {
-
-				window.location.href = `/task.html?id=${task.id}`;
-
+				if (!task.isClicked) {
+					window.location.href = `/task.html?id=${task.id}`;
+				}
 			}
 			newList.appendChild(newCard);
 
 			$('#evoCalendar').evoCalendar('addCalendarEvent', {
-				     id: task.id,
-				     name: task.name,
-				     description: task.description,
-				     date: task.date,
-				     type: 'event'
-				});
+				id: task.id,
+				name: task.name,
+				description: task.description,
+				date: task.date,
+				type: 'event'
+			});
 
 		}
+
 		console.log(rhit.fbSubTasksManager.length);
 		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
@@ -203,19 +205,21 @@ rhit.ListPageController = class {
 			console.log("subtask gotten", subtask);
 
 			newCard.onclick = (event) => {
+				if (!subtask.isClicked) {
 
-				window.location.href = `/subtask.html?id=${subtask.id}`;
+					window.location.href = `/subtask.html?id=${subtask.id}`;
+				}
 
 			}
 			newList.appendChild(newCard);
 
 			$('#evoCalendar').evoCalendar('addCalendarEvent', {
-				     id: subtask.id,
-				     name: subtask.name,
-				     description: subtask.description,
-				     date: subtask.date,
-				     type: 'event'
-				});
+				id: subtask.id,
+				name: subtask.name,
+				description: subtask.description,
+				date: subtask.date,
+				type: 'event'
+			});
 
 		}
 
@@ -304,7 +308,7 @@ rhit.FbSubTasksManager = class {
 				[rhit.FB_KEY_DUE_DATE]: date,
 				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_DESC]: desc,
-				[rhit.FB_KEY_PARENT] : pid,
+				[rhit.FB_KEY_PARENT]: pid,
 			})
 			.then(function (docRef) {
 				console.log("Document written with ID: ", docRef.id);
@@ -403,16 +407,16 @@ rhit.DetailPageController = class {
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
 
-		
+
 		console.log("length" + rhit.fbSubTasksManager.length);
 
 		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
 			console.log("parent" + subtask.parent);
 			console.log("task " + rhit.fbSingleTaskManager.name);
-			if(subtask.parent== rhit.fbSingleTaskManager.name){}
+			if (subtask.parent == rhit.fbSingleTaskManager.name) {}
 			const newCard = this._createSubCard(subtask);
-			
+
 			newCard.onclick = (event) => {
 
 				window.location.href = `/subtask.html?id=${subtask.id}`;
@@ -421,7 +425,7 @@ rhit.DetailPageController = class {
 			newList.appendChild(newCard);
 		}
 
-		
+
 
 
 		const oldList = document.querySelector("#cardsContainer");
@@ -430,8 +434,8 @@ rhit.DetailPageController = class {
 
 		oldList.parentElement.appendChild(newList);
 
-	
-		
+
+
 	}
 }
 rhit.SubDetailPageController = class {
@@ -441,7 +445,7 @@ rhit.SubDetailPageController = class {
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
-		
+
 
 		$("#editQuoteDialog").on("show.bs.modal", (event) => {
 			// Pre animation
@@ -522,7 +526,7 @@ rhit.FbSingleTaskManager = class {
 	}
 
 	get name() {
-		
+
 		return this._documentSnapshot.get(rhit.FB_KEY_NAME);
 	}
 	get desc() {
@@ -597,7 +601,7 @@ rhit.FbSingleSubTaskManager = class {
 	get author() {
 		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
 	}
-	get parent(){
+	get parent() {
 		return this._documentSnapshot.get(rhit.FB_KEY_PARENT);
 	}
 }
@@ -606,15 +610,32 @@ rhit.Task = class {
 		this.id = id;
 		this.name = name;
 		this.date = date;
+		this._isClicked = false;
 	}
+	get isClicked() {
+		return this._isClicked;
+	}
+
+	updateIsClicked(value) {
+		this.isClicked = value;
+	}
+
 }
 
-rhit.SubTask = class{
+rhit.SubTask = class {
 	constructor(id, name, date, pId) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
 		this.parent = pId;
+		this._isClicked = false;
+	}
+	get isClicked() {
+		return this._isClicked;
+	}
+
+	updateIsClicked(value) {
+		this.isClicked = value;
 	}
 }
 rhit.stopTimer = function () {
