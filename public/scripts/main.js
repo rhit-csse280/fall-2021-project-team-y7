@@ -349,6 +349,8 @@ rhit.FbSubTasksManager = class {
 
 rhit.DetailPageController = class {
 	constructor() {
+		let link = document.querySelector("#title");
+		link.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
@@ -371,7 +373,7 @@ rhit.DetailPageController = class {
 		document.querySelector("#submitDeleteQuote").addEventListener("click", (event) => {
 			rhit.fbSingleTaskManager.delete().then(function () {
 				console.log("Document successfully deleted!");
-				window.location.href = "/main.html";
+				window.location.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
 			}).catch(function (error) {
 				console.error("Error removing document: ", error);
 			});
@@ -434,6 +436,8 @@ rhit.DetailPageController = class {
 }
 rhit.SubDetailPageController = class {
 	constructor() {
+		let link = document.querySelector("#title");
+		link.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
@@ -740,7 +744,7 @@ rhit.FbAuthManager = class {
 }
 rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
-		window.location.href = "/main.html";
+		window.location.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
 	}
 	if (!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn) {
 		window.location.href = "/";
@@ -753,6 +757,7 @@ rhit.initializePage = function () {
 		console.log("You are on the main page.");
 		console.log("yee");
 		const uid = urlParams.get("uid");
+		console.log(uid + "is the user id");
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		new rhit.ListPageController();
