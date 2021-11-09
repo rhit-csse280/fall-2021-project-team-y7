@@ -115,12 +115,12 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
     
     stroke-linecap: round;
     stroke-width: 10px;
-    stroke: blue;
-    fill: lightblue;
+    stroke: #16bdfc;
+    fill: #b4e9fe;
   }
   svg #countdown-number {
-    stroke: white;
-    fill: white;
+    stroke: #16bdfc;
+    fill: #16bdfc;
     display: inline-block;
     
   
