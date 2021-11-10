@@ -173,3 +173,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   border-radius: 5px;
 }
 
+.card input{
+  color: white;
+}
+

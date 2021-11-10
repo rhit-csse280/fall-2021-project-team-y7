@@ -44,19 +44,7 @@ rhit.ListPageController = class {
 
 		if (document.querySelector("#addTaskButton") != null) {
 			document.querySelector("#addTaskButton").onclick = (event) => {
-
-
 				document.location.href = "./addTask.html"
-
-
-				// 	const list = document.querySelector("#cardsContainer");
-				// 	const card = htmlToElement(`<div class = "card"> 
-				// <div class = "card-body"> 
-				// <h5 class = "card-title"> Default Task </h5> 
-				// <h6 class = "card-subtitle" mb-2 text-muted">Default Date</h6> 
-				// </div> </div>`);
-				// 	list.appendChild(card);
-
 			};
 		}
 		if (document.querySelector("#trophiesButton") != null) {
@@ -150,7 +138,7 @@ rhit.ListPageController = class {
 	_createCard(task) {
 		return htmlToElement(`<div  class="card">
 		<div class="card-body">
-		  <input id = "t-${task.id}" type="checkbox">
+		  <input id = "${task.id}" type="checkbox" class="checkbox">
 		  <h5 class="card-title"> ${task.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${task.date}</h6>
 		</div>
@@ -159,7 +147,7 @@ rhit.ListPageController = class {
 	_createSubCard(subtask) {
 		return htmlToElement(`<div  class="card" style = "background-color: #b19cd9">
 		<div class="card-body">
-		  <input id = "st-${subtask.id}" type="checkbox">
+		  <input id = "st-${subtask.id}" type="checkbox" class="checkbox">
 		  <h5 class="card-title"> ${subtask.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
 		  <br>
@@ -170,21 +158,36 @@ rhit.ListPageController = class {
 
 	updateList() {
 
-		const checkBoxes = document.querySelectorAll("input");
+		
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
-
 		// destroy calendar
 		//$('#evoCalendar').evoCalendar('destroy');
 
+		
+
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
 			const task = rhit.fbTasksManager.getTaskAtIndex(i);
+			task.isClicked = false;
 			const newCard = this._createCard(task);
 
+			
 
 			newCard.onclick = (event) => {
-				if (!task.isClicked) {
-					window.location.href = `/task.html?id=${task.id}`;
+				const checkBoxes = document.querySelectorAll(".checkbox");
+				console.log(checkBoxes);
+				for (const box in checkBoxes){
+					console.log("box is " + box);
+					if (box.checked){
+						rhit.fbTasksManager.checkBox(box.id);
+					}
 				}
+				window.location.href = `/task.html?id=${task.id}`;
+				console.log(task);
+				if (task._isClicked) {
+					rhit.fbSingleTaskManager.delete();
+					console.log("Checkbox has been clicked");
+				}
+				
 			}
 			newList.appendChild(newCard);
 
@@ -206,7 +209,6 @@ rhit.ListPageController = class {
 
 			newCard.onclick = (event) => {
 				if (!subtask.isClicked) {
-
 					window.location.href = `/subtask.html?id=${subtask.id}`;
 				}
 
@@ -288,6 +290,10 @@ rhit.FbTasksManager = class {
 			docSnapshot.get("Name"),
 			docSnapshot.get("Due Date"));
 		return task;
+	}
+	checkBox(id){
+		console.log("inside checkBox");
+		this._ref.getElementById(id).delete();
 	}
 }
 rhit.FbSubTasksManager = class {
@@ -616,8 +622,8 @@ rhit.Task = class {
 		return this._isClicked;
 	}
 
-	updateIsClicked(value) {
-		this.isClicked = value;
+	set isClicked(value) {
+		this._isClicked = value;
 	}
 
 }
@@ -634,8 +640,8 @@ rhit.SubTask = class {
 		return this._isClicked;
 	}
 
-	updateIsClicked(value) {
-		this.isClicked = value;
+	set isClicked(value) {
+		this._isClicked = value;
 	}
 }
 rhit.stopTimer = function () {
