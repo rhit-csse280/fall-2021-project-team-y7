@@ -124,18 +124,19 @@ rhit.ListPageController = class {
 			const checkBoxes = document.querySelectorAll(".checkbox");
 			for (const box of checkBoxes) {
 				box.onclick = (event) => {
+					
 					fbTasksManager.checkBox(box.id);
 				}
 			}
 
 		}
-		if (document.querySelectorAll(".checkbox") != null) {
+		if (document.querySelectorAll(".subcheckbox") != null) {
 
-			const checkBoxes = document.querySelectorAll(".checkbox");
+			const checkBoxes = document.querySelectorAll(".subcheckbox");
 			for (const box of checkBoxes) {
 				box.onclick = (event) => {
 					console.log("box checked");
-					fbTasksManager.checkBox(box.id);
+					fbSubTasksManager.checkBox(box.id);
 				}
 			}
 
@@ -168,7 +169,7 @@ rhit.ListPageController = class {
 	_createSubCard(subtask) {
 		return htmlToElement(`<div  class="card" style = "background-color: #b19cd9">
 		<div class="card-body">
-		  <input id = "st-${subtask.id}" type="checkbox" class="checkbox">
+		  <input id = "${subtask.id}" type="checkbox" class="subcheckbox">
 		  <h5 class="card-title"> ${subtask.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
 		  <br>
@@ -182,6 +183,9 @@ rhit.ListPageController = class {
 
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
+		if((rhit.fbTasksManager.length == 0)){
+			newList.appendChild(htmlToElement(`<div style = "font-size: 2rem; text-align: center"> No Tasks </div>`));
+		}
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
 			const task = rhit.fbTasksManager.getTaskAtIndex(i);
 			task.isClicked = false;
@@ -224,9 +228,23 @@ rhit.ListPageController = class {
 			console.log("subtask gotten", subtask);
 
 			newCard.onclick = (event) => {
-				if (!subtask.isClicked) {
+
+
+				const checkBoxes = document.querySelectorAll(".subcheckbox");
+				for (const box of checkBoxes) {
+					if (box.checked) {
+						rhit.fbSubTasksManager.checkBox(box.id);
+
+						if (box.id == subtask.id) {
+							subtask.isClicked = true;
+						}
+					}
+
+				}
+				if (subtask.isClicked) {} else {
 					window.location.href = `/subtask.html?id=${subtask.id}`;
 				}
+				
 
 			}
 			newList.appendChild(newCard);
@@ -375,6 +393,14 @@ rhit.FbSubTasksManager = class {
 			docSnapshot.get(rhit.FB_KEY_NAME),
 			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT));
 		return task;
+	}
+	checkBox(id) {
+		console.log(id);
+		console.log("inside checkBox for subtask");
+
+		this._ref.doc(id).delete();
+
+
 	}
 }
 
