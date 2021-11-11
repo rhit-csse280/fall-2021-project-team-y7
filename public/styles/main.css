@@ -177,3 +177,7 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   color: white;
 }
 
+.checkbox{
+  transform: scale(2);
+}
+

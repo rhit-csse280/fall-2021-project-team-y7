@@ -38,6 +38,7 @@ rhit.ListPageController = class {
 			});
 		}
 
+
 		document.querySelector("#logoutButton").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
@@ -117,7 +118,27 @@ rhit.ListPageController = class {
 
 			}
 
-			//pause.removeEventListener("click", clickListen );
+		}
+
+		if (document.querySelectorAll(".checkbox") != null) {
+			const checkBoxes = document.querySelectorAll(".checkbox");
+			for (const box of checkBoxes) {
+				box.onclick = (event) => {
+					fbTasksManager.checkBox(box.id);
+				}
+			}
+
+		}
+		if (document.querySelectorAll(".checkbox") != null) {
+
+			const checkBoxes = document.querySelectorAll(".checkbox");
+			for (const box of checkBoxes) {
+				box.onclick = (event) => {
+					console.log("box checked");
+					fbTasksManager.checkBox(box.id);
+				}
+			}
+
 		}
 
 
@@ -158,36 +179,31 @@ rhit.ListPageController = class {
 
 	updateList() {
 
-		
-		const newList = htmlToElement('<div id = "cardsContainer"></div>');
-		// destroy calendar
-		//$('#evoCalendar').evoCalendar('destroy');
 
-		
+		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
 			const task = rhit.fbTasksManager.getTaskAtIndex(i);
 			task.isClicked = false;
 			const newCard = this._createCard(task);
 
-			
-
 			newCard.onclick = (event) => {
 				const checkBoxes = document.querySelectorAll(".checkbox");
-				console.log(checkBoxes);
-				for (const box in checkBoxes){
-					console.log("box is " + box);
-					if (box.checked){
+				for (const box of checkBoxes) {
+					if (box.checked) {
 						rhit.fbTasksManager.checkBox(box.id);
+
+						if (box.id == task.id) {
+							task.isClicked = true;
+						}
 					}
+
 				}
-				window.location.href = `/task.html?id=${task.id}`;
-				console.log(task);
-				if (task._isClicked) {
-					rhit.fbSingleTaskManager.delete();
-					console.log("Checkbox has been clicked");
+				if (task.isClicked) {} else {
+					window.location.href = `/task.html?id=${task.id}`;
 				}
-				
+
+
 			}
 			newList.appendChild(newCard);
 
@@ -291,9 +307,14 @@ rhit.FbTasksManager = class {
 			docSnapshot.get("Due Date"));
 		return task;
 	}
-	checkBox(id){
+
+	checkBox(id) {
+		console.log(id);
 		console.log("inside checkBox");
-		this._ref.getElementById(id).delete();
+
+		this._ref.doc(id).delete();
+
+
 	}
 }
 rhit.FbSubTasksManager = class {
