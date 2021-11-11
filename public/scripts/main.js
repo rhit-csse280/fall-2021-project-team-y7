@@ -226,6 +226,7 @@ rhit.ListPageController = class {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
 			const newCard = this._createSubCard(subtask);
 			console.log("subtask gotten", subtask);
+			console.log(subtask.parent);
 
 			newCard.onclick = (event) => {
 
@@ -417,6 +418,28 @@ rhit.DetailPageController = class {
 			rhit.fbSingleQuoteManager.update(quote, movie);
 		});
 
+		document.querySelector("#submitAddSubtask").addEventListener("click", (event) => {
+			const name = document.querySelector("#inputName").value;
+			const date = document.querySelector("#inputDate").value;
+			const desc = document.querySelector("#inputDesc").value;
+			const pname = docuemnt.querySelector("#parentName").innerHTML;
+			rhit.fbSubTasksManager.add(name, date, desc, rhit.fbSingleTaskManager.id, pname);
+		});
+
+		$("#addSubtaskDialog").on("show.bs.modal", (event) => {
+			// Pre animation
+			document.querySelector("#inputName").value = "";
+			document.querySelector("#inputDate").value = "";
+			document.querySelector("#inputDesc").value = "";
+			document.querySelector("#parentName").innerHTML = "Parent: " + rhit.fbSingleTaskManager.name;
+
+		});
+		$("#addSubtaskDialog").on("shown.bs.modal", (event) => {
+			// Post animation
+			document.querySelector("#inputName").focus();
+		});
+
+
 		$("#editQuoteDialog").on("show.bs.modal", (event) => {
 			// Pre animation
 			document.querySelector("#inputQuote").value = rhit.fbSingleQuoteManager.quote;
@@ -426,6 +449,8 @@ rhit.DetailPageController = class {
 			// Post animation
 			document.querySelector("#inputQuote").focus();
 		});
+
+
 
 		document.querySelector("#submitDeleteQuote").addEventListener("click", (event) => {
 			rhit.fbSingleTaskManager.delete().then(function () {
@@ -445,7 +470,7 @@ rhit.DetailPageController = class {
 		  <h5 class="card-title"> ${subtask.name}</h5>
 		  <h6 class="card-subtitle mb2 ">${subtask.date}</h6>
 		  <br>
-		  <h6 class="card-subtitle mb2 ">Parent: ${subtask.parent}</h6>
+		  <h6 class="card-subtitle mb2 ">Parent: ${rhit.fbSingleTaskManager.name}</h6>
 		</div>
 	  </div>`);
 	}
@@ -467,15 +492,18 @@ rhit.DetailPageController = class {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
 			console.log("parent" + subtask.parent);
 			console.log("task " + rhit.fbSingleTaskManager.name);
-			if (subtask.parent == rhit.fbSingleTaskManager.name) {}
-			const newCard = this._createSubCard(subtask);
 
+			if (subtask.pid == rhit.fbSingleTaskManager.id) {
+			const newCard = this._createSubCard(subtask);
+			
 			newCard.onclick = (event) => {
 
 				window.location.href = `/subtask.html?id=${subtask.id}`;
 
 			}
+		
 			newList.appendChild(newCard);
+		}
 		}
 
 
@@ -534,6 +562,7 @@ rhit.SubDetailPageController = class {
 }
 rhit.FbSingleTaskManager = class {
 	constructor(taskId) {
+		this._id = taskId;
 		this._documentSnapshot = [];
 		this._unsubscribe = null;
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TASKS).doc(taskId);
@@ -591,6 +620,9 @@ rhit.FbSingleTaskManager = class {
 
 	get author() {
 		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
+	}
+	get id(){
+		return this._id;
 	}
 }
 rhit.FbSingleSubTaskManager = class {
@@ -676,11 +708,13 @@ rhit.Task = class {
 }
 
 rhit.SubTask = class {
-	constructor(id, name, date, pId) {
+	constructor(id, name, date, pId, pName) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
-		this.parent = pId;
+		this.pid = pId;
+		this.parent = pName;
+		console.log(pName);
 		this._isClicked = false;
 	}
 	get isClicked() {

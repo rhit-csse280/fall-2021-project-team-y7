@@ -40,12 +40,51 @@
 
     <div id = "cardsContainer">
       
+      
     </div>
+    <button data-target = "#addSubtaskDialog" data-toggle = "modal" id = "subtask button" 
+    class = "btn btn-outline-dark" type = "button">Add Subtask</button>
 
   </div>
 
 
   <!-- Modals -->
+
+
+  <div class="modal fade" id="addSubtaskDialog" tabindex="-1" role="dialog" aria-labelledby="Add Subtask"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add a subtask</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-group bmd-form-group">
+          <label for="inputName">Name</label>
+          <input type="text" class="form-control" id="inputName" placeholder=" ">
+        </div>
+        <div class="form-group bmd-form-group">
+          <label for="inputDate">Due Date</label>
+          <input type="text" class="form-control" id="inputDate" placeholder=" ">
+        
+        </div>
+        <div class="form-group bmd-form-group">
+          <label for="inputDesc">Description</label>
+          <input type="text" class="form-control" id="inputDesc" placeholder=" ">
+        
+        </div>
+        <div>
+          <label id = "parentName" for="inputDesc">Parent: </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCEL</button>
+        <button id="submitAddSubtask" type="button" class="btn btn-primary" data-dismiss="modal">SAVE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <div class="modal fade" id="editQuoteDialog" tabindex="-1" role="dialog" aria-labelledby="Edit quote dialog"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
