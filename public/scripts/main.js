@@ -9,6 +9,7 @@ rhit.FB_KEY_DESC = "Description";
 rhit.FB_KEY_DATE_CREATED = "Date Created";
 rhit.FB_COLLECTION_SUBTASKS = "SubTasks";
 rhit.FB_KEY_PARENT = "Parent";
+rhit.FB_KEY_PNAME = "ParentName";
 
 var countdown = 24;
 var secCountdown = 59;
@@ -344,7 +345,7 @@ rhit.FbSubTasksManager = class {
 		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_SUBTASKS);
 		this._unsubscribe = null;
 	}
-	add(name, date, desc, pid) {
+	add(name, date, desc, pid, pname) {
 
 		this._ref.add({
 
@@ -355,6 +356,7 @@ rhit.FbSubTasksManager = class {
 				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_DESC]: desc,
 				[rhit.FB_KEY_PARENT]: pid,
+				[rhit.FB_KEY_PNAME] : pname
 			})
 			.then(function (docRef) {
 				console.log("Document written with ID: ", docRef.id);
@@ -392,7 +394,7 @@ rhit.FbSubTasksManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		const task = new rhit.SubTask(docSnapshot.id,
 			docSnapshot.get(rhit.FB_KEY_NAME),
-			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT));
+			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT), docSnapshot.get(rhit.FB_KEY_PNAME));
 		return task;
 	}
 	checkBox(id) {
@@ -422,8 +424,8 @@ rhit.DetailPageController = class {
 			const name = document.querySelector("#inputName").value;
 			const date = document.querySelector("#inputDate").value;
 			const desc = document.querySelector("#inputDesc").value;
-			const pname = docuemnt.querySelector("#parentName").innerHTML;
-			rhit.fbSubTasksManager.add(name, date, desc, rhit.fbSingleTaskManager.id, pname);
+			const pname = document.querySelector("#parentName").innerHTML;
+			rhit.fbSubTasksManager.add(name, date, desc, rhit.fbSingleTaskManager.id, rhit.fbSingleTaskManager.name);
 		});
 
 		$("#addSubtaskDialog").on("show.bs.modal", (event) => {
