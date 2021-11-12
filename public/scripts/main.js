@@ -896,6 +896,7 @@ rhit.FbAuthManager = class {
 
 	beginListening(changeListener) {
 		firebase.auth().onAuthStateChanged((user) => {
+			this._access
 			this._user = user;
 			changeListener();
 		});
