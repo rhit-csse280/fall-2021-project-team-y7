@@ -1,61 +1,82 @@
-body {
-    background: rgb(194, 193, 193);
-    font-family: 'Roboto';
+
+
+
+
+
+
+
+
+
+
+
+#addTask {
+  background-color: black;
+  grid-column: 2 /4;
+  grid-row: 1;
+  text-align: center;
 }
 
-.btn{
-    color: white;
+#addTask button {
+  margin: 15px 0;
+  font-size: 2rem;
 }
+
+
+body {
+  background: rgb(194, 193, 193);
+  font-family: 'Roboto';
+}
+
+#desc, p{
+  margin: 1rem;
+  text-align: center;
+  grid-row: 4/5;
+}
+
+
+#calendar {
+  background-color: #ffffff;
+  grid-column: 2/4;
+  grid-row: 2 / 4;
+}
+
 .navbar {
-    background-color: rgb(0, 0, 0);
-    color: white;
-    z-index: 9999;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  z-index: 9999;
 }
 
 .page-container {
-    margin-top: 75px;
+  margin-top: 75px;
 }
 
-#sectionWrapper{
-    display: grid;
+#sectionWrapper {
+  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   grid-auto-rows: minmax(100px, auto);
 
 }
 
-#tasks{
-    background-color: #efefef;
-    grid-column: 1;
-    grid-row: 1/6;
-    height: 50rem;
-    overflow: scroll;
-}
-#addTask{
-    background-color: black;
-    grid-column: 2 /4;
-  grid-row: 1 ;
-  text-align: center;
-}
-#addTask button{
-    margin: 15px 0;
-    font-size: 2rem;
-}
-#calendar{
-    background-color: #ffffff;
-    grid-column: 2/4;
-    grid-row: 2 / 4 ;
+#tasks {
+  background-color: #efefef;
+  grid-column: 1;
+  grid-row: 1/6;
+  height: 50rem;
+  overflow: scroll;
 }
 
-#timer{
-    background-color: #efefef;
-   
+
+#timer {
+  background-color: #efefef;
+
   grid-column: 2;
   grid-row: 4/ 6;
 }
-#rewards{
-    background-color: #efefef;
-    grid-column: 3;
+
+#rewards {
+  background-color: #efefef;
+  grid-column: 3;
   grid-row: 4 / 6;
   font-size: 1.5rem;
   text-align: center;
@@ -63,102 +84,106 @@ body {
   flex-direction: column;
 
 }
-#TrophyInfo{
+
+#TrophyInfo {
   margin-top: auto;
 }
-.card{
-    margin: 10px;
-    
-    color: white;
+
+.card {
+  margin: 10px;
+
+  color: white;
 }
 
-
-/* .event-indicator>.type-bullet>div.type-event {
-    background-color: #8821be;
-} */
-tr.calendar-body .calendar-day .day.calendar-today{
-    color:#000000;
-    background-color: #efefef;
-    border-color: #efefef;
-}
-tr.calendar-body .calendar-day .day.calendar-today:hover{
-    background-color: #bbbbbb;
-    border-color: #bbbbbb;
+tr.calendar-body .calendar-day .day.calendar-today {
+  color: #000000;
+  background-color: #efefef;
+  border-color: #efefef;
 }
 
+tr.calendar-body .calendar-day .day.calendar-today:hover {
+  background-color: #bbbbbb;
+  border-color: #bbbbbb;
+}
+
+svg {
+  text-align: center;
+  position: relative;
+  top: -10rem;
+  right: -3rem;
+  height: 300px;
+  /* transform: rotate(-90deg); */
+
+}
+
+.timerCircle {
+
+  stroke-dasharray: 600px;
+  stroke-dashoffset: 0px;
+  animation-duration: 1500s;
+  animation-name: countdown;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+
+
+}
+
+svg circle {
+
+  stroke-linecap: round;
+  stroke-width: 10px;
+  stroke: #16bdfc;
+  fill: #b4e9fe;
+}
+
+svg #countdown-number {
+  stroke: #16bdfc;
+  fill: #16bdfc;
+  display: inline-block;
+
+
+}
+
+#countdown {
+  position: relative;
+  top: 5rem;
+  margin: auto;
+  
+  text-align: center;
+  font-size: 3em;
+  color: white;
  
-  
- 
-  
-  svg {
-    text-align: center;
-    position:relative;
-    top: -10rem;
-    right: -3rem;
-    height: 300px;
-   /* transform: rotate(-90deg); */
-   
-  }
-  
-   .timerCircle {
-    
-    stroke-dasharray: 600px;
+}
+
+@keyframes countdown {
+  from {
     stroke-dashoffset: 0px;
-    animation-duration: 1500s;
-    animation-name: countdown;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-   animation-play-state: paused;
-
-  
-  }
-  svg circle{
-    
-    stroke-linecap: round;
-    stroke-width: 10px;
-    stroke: #16bdfc;
-    fill: #b4e9fe;
-  }
-  svg #countdown-number {
-    stroke: #16bdfc;
-    fill: #16bdfc;
-    display: inline-block;
-    
-  
-  }
-  #countdown {
-    position: relative;
-    top: 5rem;
-    margin: auto;
-    margin-top: 100px;
-    text-align: center;
-    font-size: 3em;
-    color: white;
-    background-color: #efefef;
-  }
-  
-  @keyframes countdown {
-    from {
-      stroke-dashoffset: 0px;
-    }
-    to {
-      stroke-dashoffset: 600px;
-    }
   }
 
-  #pauseButton{
-      display: none;
+  to {
+    stroke-dashoffset: 600px;
   }
-  .timerbtns{
-    
-      text-align: center;
-  }
-  .timerbtn{
-    font-size: 2rem;
-  }
-#bigTrophy, .trophy{
-  width:100px;
-  height:auto;
+}
+
+#pauseButton {
+  display: none;
+}
+
+.timerbtns {
+  margin-top: 0;
+  margin-bottom: 0;;
+  text-align: center;
+}
+
+.timerbtn {
+  font-size: 2rem;
+}
+
+#bigTrophy,
+.trophy {
+  width: 100px;
+  height: auto;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -174,55 +199,192 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   border-radius: 5px;
 }
 
-.fb0000{
+.fb0000 {
   background-color: #FB0000
 }
-.f58929{
+
+.f58929 {
   background-color: #f58929
 }
-.ffc717{
+
+.ffc717 {
   background-color: #ffc717
 }
-.\39 ad53b{
-  background-color : #9ad53b
+
+.\39 ad53b {
+  background-color: #9ad53b
 }
-.\31 6bdfc{
+
+.\31 6bdfc {
   background-color: #16bdfc
 }
-.\38 821be{
+
+.\38 821be {
   background-color: #8821be
 }
-.d41067{
+
+.d41067 {
   background-color: #d41067
 }
-.\30 00000{
+
+.\30 00000 {
   background-color: #000000
 }
-.ff8b8b{
+
+.ff8b8b {
   background-color: #ff8b8b
 }
-.f8ad68{
-  background-color:#f8ad68
+
+.f8ad68 {
+  background-color: #f8ad68
 }
-.ffe38b{
+
+.ffe38b {
   background-color: #ffe38b
 }
-.cdea9e{
+
+.cdea9e {
   background-color: #cdea9e
 }
-.b4e9fe{
+
+.b4e9fe {
   background-color: #b4e9fe
 }
-.b19ad6{
+
+.b19ad6 {
   background-color: #b19ad6
 }
-.e3859a{
+
+.e3859a {
   background-color: #e385a9
 }
-.\35 25252{
+
+.\35 25252 {
   background-color: #525252
 }
-.checkbox, .subcheckbox{
+
+.checkbox,
+.subcheckbox {
   transform: scale(2);
 }
 
+
+@media screen and (max-width: 768px) {
+  #addTask {
+    background-color: black;
+    grid-column: 4;
+    grid-row: 1;
+    text-align: center;
+  }
+  
+  #addTask button {
+    margin: 15px 0;
+    font-size: 2rem;
+  }
+  #calendar {
+    background-color: #ffffff;
+    grid-column:4;
+    grid-row: 2 / 3;
+  }
+  #sectionWrapper {
+    display: grid;
+    gap: 10px;
+    
+  }
+  
+  #tasks {
+    background-color: #efefef;
+    grid-column: 1;
+    grid-row: 1/6;
+    height: 50rem;
+    overflow: scroll;
+  }
+  #timer {
+    background-color: #efefef;
+    grid-column: 2;
+    grid-row: 4;
+  }
+  
+  #rewards {
+    background-color: #efefef;
+    grid-column: 3;
+    grid-row: 4 ;
+    font-size: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  
+  }
+  svg {
+    text-align: center;
+    position: relative;
+    top: -10rem;
+    right: -3rem;
+    height: 300px;
+    /* transform: rotate(-90deg); */
+  
+  }
+}
+
+
+
+
+
+/** Media Screens**/
+@media screen and (max-width: 768px) {
+  #addTask {
+    background-color: black;
+    grid-column: 2/3;
+    grid-row: 2;
+    text-align: center;
+  }
+  
+  #addTask button {
+    margin: 15px 0;
+    font-size: 2rem;
+  }
+  #calendar {
+    background-color: #ffffff;
+    grid-column:2;
+    grid-row:  3;
+  }
+  #sectionWrapper {
+    display: grid;
+    gap: 10px;
+    
+  }
+  
+  #tasks {
+    background-color: #efefef;
+    grid-column: 2/3;
+    grid-row: 1;
+    height: 25rem;
+    overflow: scroll;
+  }
+  #timer {
+    background-color: #efefef;
+  
+    grid-column: 2;
+    grid-row: 5;
+  }
+  
+  #rewards {
+    background-color: #efefef;
+    grid-column: 2/3;
+    grid-row:  4;
+    font-size: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  
+  }
+  svg {
+    text-align: center;
+    position: relative;
+    top: -10rem;
+    right: -3rem;
+    height: 300px;
+    /* transform: rotate(-90deg); */
+  
+  }
+}
