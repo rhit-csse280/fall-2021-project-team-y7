@@ -920,7 +920,7 @@ rhit.startTimer = function () {
 						secCountdown = --secCountdown;
 					}
 				}
-				let n = new Notification('Timer Complete!');
+				let n = new Notification('Timer Complete!'); //this will go off every second until user clicks stop button
 			}
 
 
