@@ -160,7 +160,7 @@ rhit.ListPageController = class {
 	}
 	_createCard(task) {
 		console.log(task.color + "is color ");
-		return htmlToElement(`<div  class=" ${task.color} card">
+		return htmlToElement(`<div  class="${task.color} card">
 		<div class="card-body">
 		  <input id = "${task.id}" type="checkbox" class="checkbox">
 		  <h5 class="card-title"> ${task.name}</h5>
@@ -219,7 +219,8 @@ rhit.ListPageController = class {
 				name: task.name,
 				description: task.description,
 				date: task.date,
-				type: 'event'
+				type: 'event',
+				color: `#${task.color}`
 			});
 
 		}
@@ -258,7 +259,9 @@ rhit.ListPageController = class {
 				name: subtask.name,
 				description: subtask.description,
 				date: subtask.date,
-				type: 'event'
+				type: 'event',
+				color: `#${subtask.color}`
+
 			});
 
 		}
@@ -729,27 +732,28 @@ rhit.Task = class {
 
 		console.log("days is " + days);
 		if(days >= 7){
-			return "pink";
+			return "d41067";
+			//pink
 		}
 		if(days == 6){
-			return "purple";
+			return "8821be"; //purple
 		}
 		if(days == 5){
-			return "blue";
+			return "16bdfc"; //blue
 		}
 		if(days == 4){
-			return "green";
+			return "9ad53b"; //green
 		}
 		if(days == 3){
-			return "yellow";
+			return "ffc717"; //yellow
 		}
 		if(days == 2){
-			return "orange";
+			return "f58929"; //orange
 		}
 		if(days <= 1){
-			return "red";
+			return "fb0000"; //red
 		}
-		return "grey";
+		return "000000";
 	}
 
 }
@@ -783,28 +787,28 @@ rhit.SubTask = class {
 
 		console.log("days is " + days);
 		if(days >= 7){
-			return "pink-pastel";
+			return "e385a9";
 		}
 		if(days == 6){
-			return "purple-pastel";
+			return "b19ad6";
 		}
 		if(days == 5){
-			return "blue-pastel";
+			return "b4e9fe";
 		}
 		if(days == 4){
-			return "green-pastel";
+			return "cdea9e";
 		}
 		if(days == 3){
-			return "yellow-pastel";
+			return "ffe38b";
 		}
 		if(days == 2){
-			return "orange-pastel";
+			return "f8ad68";
 		}
 		if(days <= 1){
-			return "red-pastel";
+			return "ff8b8b";
 		}
 		console.log("returning grey");
-		return "grey-pastel";
+		return "525252";
 	}
 }
 rhit.stopTimer = function () {

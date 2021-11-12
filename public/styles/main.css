@@ -72,9 +72,10 @@ body {
     color: white;
 }
 
-.event-indicator>.type-bullet>div.type-event {
+
+/* .event-indicator>.type-bullet>div.type-event {
     background-color: #8821be;
-}
+} */
 tr.calendar-body .calendar-day .day.calendar-today{
     color:#000000;
     background-color: #efefef;
@@ -173,52 +174,52 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   border-radius: 5px;
 }
 
-.red{
+.fb0000{
   background-color: #FB0000
 }
-.orange{
+.f58929{
   background-color: #f58929
 }
-.yellow{
+.ffc717{
   background-color: #ffc717
 }
-.green{
+.\39 ad53b{
   background-color : #9ad53b
 }
-.blue{
+.\31 6bdfc{
   background-color: #16bdfc
 }
-.purple{
+.\38 821be{
   background-color: #8821be
 }
-.pink{
+.d41067{
   background-color: #d41067
 }
-.grey{
+.\30 00000{
   background-color: #000000
 }
-.red-pastel{
+.ff8b8b{
   background-color: #ff8b8b
 }
-.orange-pastel{
+.f8ad68{
   background-color:#f8ad68
 }
-.yellow-pastel{
+.ffe38b{
   background-color: #ffe38b
 }
-.green-pastel{
+.cdea9e{
   background-color: #cdea9e
 }
-.blue-pastel{
+.b4e9fe{
   background-color: #b4e9fe
 }
-.purple-pastel{
+.b19ad6{
   background-color: #b19ad6
 }
-.pink-pastel{
+.e3859a{
   background-color: #e385a9
 }
-.grey-pastel{
+.\35 25252{
   background-color: #525252
 }
 .checkbox, .subcheckbox{
