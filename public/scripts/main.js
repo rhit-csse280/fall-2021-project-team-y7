@@ -228,6 +228,16 @@ rhit.ListPageController = class {
 	updateList() {
 
 
+		
+		$("#evoCalendar").evoCalendar('destroy');
+		$("#evoCalendar").evoCalendar({
+			todayHighlight: true,
+			sidebarDisplayDefault: true,
+			sidebarToggler: false,
+			eventDisplayDefault: false,
+			eventListToggler: false
+		});
+
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
 		if ((rhit.fbTasksManager.length == 0)) {
