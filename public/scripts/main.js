@@ -27,6 +27,7 @@ function htmlToElement(html) {
 
 rhit.ListPageController = class {
 	constructor() {
+		this.askNotificationPermission();
 		console.log("creating list page controller");
 		console.log("hello!");
 		console.log(document.querySelector("#logoutButton") + "logoutButon");
@@ -120,7 +121,11 @@ rhit.ListPageController = class {
 			}
 
 		}
-
+		if (document.querySelector("#enable") != null) {
+			document.querySelector("#enable").onclick = (event) => {
+				this.askNotificationPermission();
+			};
+		}
 		if (document.querySelectorAll(".checkbox") != null) {
 			const checkBoxes = document.querySelectorAll(".checkbox");
 			for (const box of checkBoxes) {
@@ -158,6 +163,45 @@ rhit.ListPageController = class {
 		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
 
 	}
+	askNotificationPermission() {
+		// function to actually ask the permissions
+		function handlePermission(permission) {
+			let notificationBtn = document.querySelector("#enable");
+			// set the button to shown or hidden, depending on what the user answers
+			if (Notification.permission === 'denied' || Notification.permission === 'default') {
+				notificationBtn.style.display = 'block';
+			} else {
+				notificationBtn.style.display = 'none';
+			}
+		}
+
+		// Let's check if the browser supports notifications
+		if (!('Notification' in window)) {
+			console.log("This browser does not support notifications.");
+		} else {
+			if (this.checkNotificationPromise()) {
+				Notification.requestPermission()
+					.then((permission) => {
+						handlePermission(permission);
+					})
+			} else {
+				Notification.requestPermission(function (permission) {
+					handlePermission(permission);
+				});
+			}
+		}
+	}
+
+	 checkNotificationPromise() {
+		try {
+		  Notification.requestPermission().then();
+		} catch(e) {
+		  return false;
+		}
+	
+		return true;
+	  }
+
 	_createCard(task) {
 		console.log(task.color + "is color ");
 		return htmlToElement(`<div  class="${task.color} card">
@@ -201,6 +245,8 @@ rhit.ListPageController = class {
 						rhit.fbTasksManager.checkBox(box.id);
 
 						if (box.id == task.id) {
+							let n = new Notification('Task Completed!');
+							
 							task.isClicked = true;
 						}
 					}
@@ -241,6 +287,7 @@ rhit.ListPageController = class {
 						rhit.fbSubTasksManager.checkBox(box.id);
 
 						if (box.id == subtask.id) {
+							let n = new Notification('SubTask Completed!');
 							subtask.isClicked = true;
 						}
 					}
@@ -731,26 +778,26 @@ rhit.Task = class {
 		let days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
 
 		console.log("days is " + days);
-		if(days >= 7){
+		if (days >= 7) {
 			return "d41067";
 			//pink
 		}
-		if(days == 6){
+		if (days == 6) {
 			return "8821be"; //purple
 		}
-		if(days == 5){
+		if (days == 5) {
 			return "16bdfc"; //blue
 		}
-		if(days == 4){
+		if (days == 4) {
 			return "9ad53b"; //green
 		}
-		if(days == 3){
+		if (days == 3) {
 			return "ffc717"; //yellow
 		}
-		if(days == 2){
+		if (days == 2) {
 			return "f58929"; //orange
 		}
-		if(days <= 1){
+		if (days <= 1) {
 			return "fb0000"; //red
 		}
 		return "000000";
@@ -786,27 +833,29 @@ rhit.SubTask = class {
 		let days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
 
 		console.log("days is " + days);
-		if(days >= 7){
+		if (days >= 7) {
 			return "e385a9";
 		}
-		if(days == 6){
+		if (days == 6) {
 			return "b19ad6";
 		}
-		if(days == 5){
+		if (days == 5) {
 			return "b4e9fe";
 		}
-		if(days == 4){
+		if (days == 4) {
 			return "cdea9e";
 		}
-		if(days == 3){
+		if (days == 3) {
 			return "ffe38b";
 		}
-		if(days == 2){
+		if (days == 2) {
 			return "f8ad68";
 		}
-		if(days <= 1){
+		if (days <= 1) {
+
 			return "ff8b8b";
 		}
+		
 		console.log("returning grey");
 		return "525252";
 	}
@@ -871,6 +920,7 @@ rhit.startTimer = function () {
 						secCountdown = --secCountdown;
 					}
 				}
+				let n = new Notification('Timer Complete!');
 			}
 
 
