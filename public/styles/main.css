@@ -14,17 +14,20 @@
   grid-column: 2 /4;
   grid-row: 1;
   text-align: center;
+  color: white;
 }
 
 #addTask button {
   margin: 15px 0;
   font-size: 2rem;
+  color: white;
 }
 
 
 body {
   background: rgb(194, 193, 193);
   font-family: 'Roboto';
+
 }
 
 #desc, p{
