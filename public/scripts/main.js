@@ -331,9 +331,17 @@ rhit.FbTasksManager = class {
 	checkBox(id) {
 		console.log(id);
 		console.log("inside checkBox");
-
+		let dependents = false;
+		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
+			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
+			if(subtask.pid == id){
+				dependents = true;
+				break;
+			}
+		}
+		if(!dependents){
 		this._ref.doc(id).delete();
-
+		}
 
 	}
 }
