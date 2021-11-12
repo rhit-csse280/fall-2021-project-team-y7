@@ -68,7 +68,7 @@ body {
 }
 .card{
     margin: 10px;
-    background-color: #8821be;
+    
     color: white;
 }
 
@@ -173,10 +173,54 @@ tr.calendar-body .calendar-day .day.calendar-today:hover{
   border-radius: 5px;
 }
 
-.card input{
-  color: white;
+.red{
+  background-color: #FB0000
 }
-
+.orange{
+  background-color: #f58929
+}
+.yellow{
+  background-color: #ffc717
+}
+.green{
+  background-color : #9ad53b
+}
+.blue{
+  background-color: #16bdfc
+}
+.purple{
+  background-color: #8821be
+}
+.pink{
+  background-color: #d41067
+}
+.grey{
+  background-color: #000000
+}
+.red-pastel{
+  background-color: #ff8b8b
+}
+.orange-pastel{
+  background-color:#f8ad68
+}
+.yellow-pastel{
+  background-color: #ffe38b
+}
+.green-pastel{
+  background-color: #cdea9e
+}
+.blue-pastel{
+  background-color: #b4e9fe
+}
+.purple-pastel{
+  background-color: #b19ad6
+}
+.pink-pastel{
+  background-color: #e385a9
+}
+.grey-pastel{
+  background-color: #525252
+}
 .checkbox, .subcheckbox{
   transform: scale(2);
 }

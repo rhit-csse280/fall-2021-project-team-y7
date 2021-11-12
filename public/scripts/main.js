@@ -125,7 +125,7 @@ rhit.ListPageController = class {
 			const checkBoxes = document.querySelectorAll(".checkbox");
 			for (const box of checkBoxes) {
 				box.onclick = (event) => {
-					
+
 					fbTasksManager.checkBox(box.id);
 				}
 			}
@@ -159,7 +159,8 @@ rhit.ListPageController = class {
 
 	}
 	_createCard(task) {
-		return htmlToElement(`<div  class="card">
+		console.log(task.color + "is color ");
+		return htmlToElement(`<div  class=" ${task.color} card">
 		<div class="card-body">
 		  <input id = "${task.id}" type="checkbox" class="checkbox">
 		  <h5 class="card-title"> ${task.name}</h5>
@@ -168,7 +169,8 @@ rhit.ListPageController = class {
 	  </div>`);
 	}
 	_createSubCard(subtask) {
-		return htmlToElement(`<div  class="card" style = "background-color: #b19cd9">
+		console.log(subtask.color);
+		return htmlToElement(`<div  class=" ${subtask.color} card" >
 		<div class="card-body">
 		  <input id = "${subtask.id}" type="checkbox" class="subcheckbox">
 		  <h5 class="card-title"> ${subtask.name}</h5>
@@ -184,7 +186,7 @@ rhit.ListPageController = class {
 
 		const newList = htmlToElement('<div id = "cardsContainer"></div>');
 
-		if((rhit.fbTasksManager.length == 0)){
+		if ((rhit.fbTasksManager.length == 0)) {
 			newList.appendChild(htmlToElement(`<div style = "font-size: 2rem; text-align: center"> No Tasks </div>`));
 		}
 		for (let i = 0; i < rhit.fbTasksManager.length; i++) {
@@ -246,7 +248,7 @@ rhit.ListPageController = class {
 				if (subtask.isClicked) {} else {
 					window.location.href = `/subtask.html?id=${subtask.id}`;
 				}
-				
+
 
 			}
 			newList.appendChild(newCard);
@@ -324,7 +326,7 @@ rhit.FbTasksManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		const task = new rhit.Task(docSnapshot.id,
 			docSnapshot.get("Name"),
-			docSnapshot.get("Due Date"));
+			docSnapshot.get("Due Date"), docSnapshot.get(rhit.FB_KEY_DATE_CREATED));
 		return task;
 	}
 
@@ -334,13 +336,13 @@ rhit.FbTasksManager = class {
 		let dependents = false;
 		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
-			if(subtask.pid == id){
+			if (subtask.pid == id) {
 				dependents = true;
 				break;
 			}
 		}
-		if(!dependents){
-		this._ref.doc(id).delete();
+		if (!dependents) {
+			this._ref.doc(id).delete();
 		}
 
 	}
@@ -364,7 +366,7 @@ rhit.FbSubTasksManager = class {
 				[rhit.FB_KEY_DATE_CREATED]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_DESC]: desc,
 				[rhit.FB_KEY_PARENT]: pid,
-				[rhit.FB_KEY_PNAME] : pname
+				[rhit.FB_KEY_PNAME]: pname
 			})
 			.then(function (docRef) {
 				console.log("Document written with ID: ", docRef.id);
@@ -402,7 +404,7 @@ rhit.FbSubTasksManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		const task = new rhit.SubTask(docSnapshot.id,
 			docSnapshot.get(rhit.FB_KEY_NAME),
-			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT), docSnapshot.get(rhit.FB_KEY_PNAME));
+			docSnapshot.get(rhit.FB_KEY_DUE_DATE), docSnapshot.get(rhit.FB_KEY_PARENT), docSnapshot.get(rhit.FB_KEY_PNAME), docSnapshot.get(rhit.FB_KEY_DATE_CREATED));
 		return task;
 	}
 	checkBox(id) {
@@ -474,7 +476,7 @@ rhit.DetailPageController = class {
 		rhit.fbSingleTaskManager.beginListening(this.updateView.bind(this));
 	}
 	_createSubCard(subtask) {
-		return htmlToElement(`<div class="card" style = "background-color: #b19cd9">
+		return htmlToElement(`<div class=" ${subtask.color} card" ">
 		<div class="card-body">
 		  <input type="checkbox">
 		  <h5 class="card-title"> ${subtask.name}</h5>
@@ -504,16 +506,16 @@ rhit.DetailPageController = class {
 			console.log("task " + rhit.fbSingleTaskManager.name);
 
 			if (subtask.pid == rhit.fbSingleTaskManager.id) {
-			const newCard = this._createSubCard(subtask);
-			
-			newCard.onclick = (event) => {
+				const newCard = this._createSubCard(subtask);
 
-				window.location.href = `/subtask.html?id=${subtask.id}`;
+				newCard.onclick = (event) => {
 
+					window.location.href = `/subtask.html?id=${subtask.id}`;
+
+				}
+
+				newList.appendChild(newCard);
 			}
-		
-			newList.appendChild(newCard);
-		}
 		}
 
 
@@ -631,7 +633,7 @@ rhit.FbSingleTaskManager = class {
 	get author() {
 		return this._documentSnapshot.get(rhit.FB_KEY_AUTHOR);
 	}
-	get id(){
+	get id() {
 		return this._id;
 	}
 }
@@ -701,11 +703,12 @@ rhit.FbSingleSubTaskManager = class {
 	}
 }
 rhit.Task = class {
-	constructor(id, name, date) {
+	constructor(id, name, date, creationDate) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
 		this._isClicked = false;
+		this.color = this.calculateColor(date, creationDate);
 	}
 	get isClicked() {
 		return this._isClicked;
@@ -715,10 +718,44 @@ rhit.Task = class {
 		this._isClicked = value;
 	}
 
+	calculateColor(dueDate, creationDate) {
+		let dd = new Date(dueDate);
+		let cd = creationDate.toDate();
+
+		console.log(dd);
+		console.log(cd);
+		let Difference_In_Time = dd.getTime() - cd.getTime();
+		let days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
+
+		console.log("days is " + days);
+		if(days >= 7){
+			return "pink";
+		}
+		if(days == 6){
+			return "purple";
+		}
+		if(days == 5){
+			return "blue";
+		}
+		if(days == 4){
+			return "green";
+		}
+		if(days == 3){
+			return "yellow";
+		}
+		if(days == 2){
+			return "orange";
+		}
+		if(days <= 1){
+			return "red";
+		}
+		return "grey";
+	}
+
 }
 
 rhit.SubTask = class {
-	constructor(id, name, date, pId, pName) {
+	constructor(id, name, date, pId, pName, creationDate) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
@@ -726,6 +763,7 @@ rhit.SubTask = class {
 		this.parent = pName;
 		console.log(pName);
 		this._isClicked = false;
+		this.color = this.calculateColor(date, creationDate);
 	}
 	get isClicked() {
 		return this._isClicked;
@@ -733,6 +771,40 @@ rhit.SubTask = class {
 
 	set isClicked(value) {
 		this._isClicked = value;
+	}
+	calculateColor(dueDate, creationDate) {
+		let dd = new Date(dueDate);
+		let cd = creationDate.toDate();
+
+		console.log(dd);
+		console.log(cd);
+		let Difference_In_Time = dd.getTime() - cd.getTime();
+		let days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
+
+		console.log("days is " + days);
+		if(days >= 7){
+			return "pink-pastel";
+		}
+		if(days == 6){
+			return "purple-pastel";
+		}
+		if(days == 5){
+			return "blue-pastel";
+		}
+		if(days == 4){
+			return "green-pastel";
+		}
+		if(days == 3){
+			return "yellow-pastel";
+		}
+		if(days == 2){
+			return "orange-pastel";
+		}
+		if(days <= 1){
+			return "red-pastel";
+		}
+		console.log("returning grey");
+		return "grey-pastel";
 	}
 }
 rhit.stopTimer = function () {
