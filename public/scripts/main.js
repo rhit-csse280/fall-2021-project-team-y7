@@ -15,6 +15,8 @@ rhit.FB_KEY_MAX_STREAK = "Date Max Achieved";
 rhit.FB_KEY_DAYS = "Days";
 rhit.FB_KEY_LAST_LOGIN = "Last Login";
 rhit.FB_KEY_MAX_DAYS = "Max Days";
+rhit.FB_COLLECTION_TROPHIES = "Trophies";
+rhit.FB_KEY_DATE = "Date";
 
 var countdown = 24;
 var secCountdown = 59;
@@ -1125,15 +1127,85 @@ rhit.Streak = class {
 		this._lastLogin = firebase.firestore.Timestamp.now();
 	}
 	checkForTrophy = function () {
+		console.log("current days: " + this._currentDays);
 		if ((this._currentDays <= 30 && this._currentDays % 5 == 0) || (this._currentDays > 30 && this._currentDays % 10 == 0)) {
-			//Add new Trophy with user id, currentdate and currentDays
+			rhit.fbTrophiesManager.add(this._lastLogin, this._currentDays);
 		}
 	}
 	updateInFirebase = function () {
-		//TODO: send data to StreaksManager and update in firebase
 		rhit.fbStreaksManager.update(this._maxStreak, this._lastLogin, this._maxDays, this._currentDays);
 	}
 }
+
+rhit.FbTrophiesManager = class {
+	constructor() {
+		this._uid = rhit.fbAuthManager.uid;
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_TROPHIES);
+		this._unsubscribe = null;
+	}
+
+	add(date, days) {
+
+		this._ref.add({
+
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_DATE]: date,
+				[rhit.FB_KEY_DAYS]: days
+			})
+			.then(function (docRef) {
+				console.log("Trophy written with ID: ", docRef.id);
+			})
+			.catch(function (error, docRef) {
+				console.log(docRef.id);
+				console.error("Error adding document: ", error);
+			})
+		console.log("trophy added");
+	}
+
+	
+
+	beginListening(changeListener) {
+
+		let query = this._ref.orderBy(rhit.FB_KEY_DATE, "desc").limit(50);
+
+		console.log(query + "is query");
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			console.log(querySnapshot.docs + "is snapshot");
+			console.log("1234", querySnapshot.docs);
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
+	}
+	getTrophyAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const trophy = new rhit.Trophy(docSnapshot.id,
+			docSnapshot.get(rhit.FB_KEY_AUTHOR),
+			docSnapshot.get(rhit.FB_KEY_DATE), docSnapshot.get(rhit.FB_KEY_DAYS));
+		return trophy;
+	}
+}
+
+rhit.Trophy = class {
+	constructor(id, author, date, days) {
+		this._id = id;
+		this._author = author;
+		this._date = date;
+		this._days = days;
+	}
+
+}
+
+
 rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
 		window.location.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
@@ -1152,6 +1224,7 @@ rhit.initializePage = function () {
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		rhit.fbStreaksManager = new rhit.FbStreaksManager();
+		rhit.fbTrophiesManager = new rhit.FbTrophiesManager();
 
 		new rhit.ListPageController();
 
@@ -1164,11 +1237,11 @@ rhit.initializePage = function () {
 				let currentDate = firebase.firestore.Timestamp.now().toDate();
 				console.log(userStreak._lastLogin);
 				let lastLoginDate = userStreak._lastLogin.toDate();
-				if (lastLoginDate == currentDate) {
+				if (lastLoginDate.getYear() == currentDate.getYear() && lastLoginDate.getMonth() == currentDate.getMonth() && lastLoginDate.getDate() == currentDate.getDate()) {
 					//Do nothing!
 				}
 				let yesterday = new Date(currentDate - 86400000); //milliseconds in day
-				if (userStreak.lastlogin == yesterday) {
+				if (lastLoginDate.getYear() == yesterday.getYear() && lastLoginDate.getMonth() == yesterday.getMonth() && lastLoginDate.getDate() == yesterday.getDate()) {
 					userStreak.increaseDays();
 				} else {
 					userStreak.resetStreak();
