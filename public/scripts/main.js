@@ -856,7 +856,7 @@ rhit.Task = class {
 		if (days <= 1) {
 			return "fb0000"; //red
 		}
-		return "000000";
+		return "7ffc03";
 	}
 
 }
