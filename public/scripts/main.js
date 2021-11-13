@@ -12,7 +12,7 @@ rhit.FB_KEY_PARENT = "Parent";
 rhit.FB_KEY_PNAME = "ParentName";
 rhit.FB_COLLECTION_STREAKS = "Streaks";
 rhit.FB_KEY_MAX_STREAK = "Date Max Achieved";
-rhit.FB_KEYS_DAYS = "Days";
+rhit.FB_KEY_DAYS = "Days";
 rhit.FB_KEY_LAST_LOGIN = "Last Login";
 rhit.FB_KEY_MAX_DAYS = "Max Days";
 
@@ -210,7 +210,7 @@ rhit.ListPageController = class {
 	}
 
 	_createCard(task) {
-		console.log(task.color + "is color ");
+
 		return htmlToElement(`<div  class="${task.color} card">
 		<div class="card-body">
 		  <input id = "${task.id}" type="checkbox" class="checkbox">
@@ -288,12 +288,11 @@ rhit.ListPageController = class {
 
 		}
 
-		console.log(rhit.fbSubTasksManager.length);
+
 		for (let i = 0; i < rhit.fbSubTasksManager.length; i++) {
 			const subtask = rhit.fbSubTasksManager.getSubTaskAtIndex(i);
 			const newCard = this._createSubCard(subtask);
-			console.log("subtask gotten", subtask);
-			console.log(subtask.parent);
+
 
 			newCard.onclick = (event) => {
 
@@ -789,12 +788,9 @@ rhit.Task = class {
 		let dd = new Date(dueDate);
 		let cd = creationDate.toDate();
 
-		console.log(dd);
-		console.log(cd);
 		let Difference_In_Time = dd.getTime() - cd.getTime();
 		let days = Math.floor(Difference_In_Time / (1000 * 3600 * 24));
 
-		console.log("days is " + days);
 		if (days >= 7) {
 			return "d41067";
 			//pink
@@ -1015,58 +1011,55 @@ rhit.FbStreaksManager = class {
 
 	add() {
 
-		this._ref.add({
+		this._ref.doc(rhit.fbAuthManager.uid).set({
 
 				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 				[rhit.FB_KEY_MAX_STREAK]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_LAST_LOGIN]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_MAX_DAYS]: 0,
-				[rhit.FB_KEYS_DAYS]: 0
+				[rhit.FB_KEY_DAYS]: 0
 			})
 			.then(function (docRef) {
 				console.log("Streak written with ID: ", docRef.id);
+			})
+			.catch(function (error, docRef) {
+				console.log(docRef.id);
+				console.error("Error adding document: ", error);
+			})
+		console.log("streak added");
+	}
+
+	update(maxStreak, lastLogin, maxDays, currentDays) {
+		console.log("this is ", this);
+		console.log("this is ", this._ref);
+		this._ref.doc(rhit.fbAuthManager.uid).update(
+
+				{
+					[rhit.FB_KEY_MAX_STREAK]: maxStreak,
+					[rhit.FB_KEY_LAST_LOGIN]: lastLogin,
+					[rhit.FB_KEY_MAX_DAYS]: maxDays,
+					[rhit.FB_KEY_DAYS]: currentDays
+				}
+			)
+			.then(function (docRef) {
+			
+				console.log("Streak updated");
 			})
 			.catch(function (error) {
 				console.error("Error adding document: ", error);
 			})
 
-		setTimeout(() => {
-			console.log("stop!");
-		}, 2000);
-
-		console.log("streak added");
-	}
-	update(maxStreak, lastLogin, maxDays, currentDays){
-		this._ref.update({
-
-			[rhit.FB_KEY_AUTHOR]: this._uid,
-			[rhit.FB_KEY_MAX_STREAK]: maxStreak,
-			[rhit.FB_KEY_LAST_LOGIN]: lastLogin,
-			[rhit.FB_KEY_MAX_DAYS]: maxDays,
-			[rhit.FB_KEYS_DAYS]: currentDays
-		})
-		.then(function (docRef) {
-			console.log("Streak updated with ID: ", docRef.id);
-		})
-		.catch(function (error) {
-			console.error("Error adding document: ", error);
-		})
-
-	setTimeout(() => {
-		console.log("stop!");
-	}, 2000);
-
-	console.log("streak updated");
+		console.log("streak updated");
 	}
 
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(rhit.FB_KEY_LAST_LOGIN, "desc").limit(50);
-		
+
 		console.log(query + "is query");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			console.log(querySnapshot.docs + "is snapshot");
-			console.log(querySnapshot.empty);
+			console.log("1234", querySnapshot.docs);
 			this._documentSnapshots = querySnapshot.docs;
 			changeListener();
 
@@ -1084,19 +1077,19 @@ rhit.FbStreaksManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		const streak = new rhit.Streak(docSnapshot.id,
 			docSnapshot.get(rhit.FB_KEY_AUTHOR),
-			docSnapshot.get(rhit.FB_KEY_MAX_STREAK), docSnapshot.get(rhit.FB_KEY_LAST_LOGIN), );
-		docSnapshot.get(rhit.FB_KEY_MAX_DAYS), docSnapshot.get(rhit.FB_KEYS_DAYS)
+			docSnapshot.get(rhit.FB_KEY_MAX_STREAK), docSnapshot.get(rhit.FB_KEY_LAST_LOGIN),
+			docSnapshot.get(rhit.FB_KEY_MAX_DAYS), docSnapshot.get(rhit.FB_KEY_DAYS));
 		return streak;
 	}
-	getStreakByAuthor(){
+	getStreakByAuthor() {
 		//TODO: check if author is the same for each streak in docsnapshot 
 		//using getStreakAtIndex method, if found return new streak 
 
 		console.log("getss streak" + this._documentSnapshots.length);
 
-		for(let i = 0; i < this._documentSnapshots.length; i++){
+		for (let i = 0; i < this._documentSnapshots.length; i++) {
 			console.log(this.getStreakAtIndex(i));
-			if(this.getStreakAtIndex(i)._author == this._uid){
+			if (this.getStreakAtIndex(i)._author == this._uid) {
 
 				return this.getStreakAtIndex(i);
 			}
@@ -1118,27 +1111,27 @@ rhit.Streak = class {
 
 	}
 
-	increaseDays = function(){
+	increaseDays = function () {
 		this._currentDays++;
 		this._lastLogin = firebase.firestore.Timestamp.now();
-		if(this._currentDays > this._maxDays){
+		if (this._currentDays > this._maxDays) {
 			this._maxDays = this._currentDays;
 			this._maxStreak = this._lastLogin;
-		
+
 		}
 	}
-	resetStreak = function(){
+	resetStreak = function () {
 		this._currentDays = 1;
 		this._lastLogin = firebase.firestore.Timestamp.now();
 	}
-	checkForTrophy = function(){
-		if((this._currentDays <= 30 && this._currentDays % 5 == 0)|| (this._currentDays > 30 && this._currentDays % 10 == 0)){
+	checkForTrophy = function () {
+		if ((this._currentDays <= 30 && this._currentDays % 5 == 0) || (this._currentDays > 30 && this._currentDays % 10 == 0)) {
 			//Add new Trophy with user id, currentdate and currentDays
 		}
 	}
-	updateInFirebase = function(){
+	updateInFirebase = function () {
 		//TODO: send data to StreaksManager and update in firebase
-		rhit.fbStreaksManager.add();
+		rhit.fbStreaksManager.update(this._maxStreak, this._lastLogin, this._maxDays, this._currentDays);
 	}
 }
 rhit.checkForRedirects = function () {
@@ -1159,38 +1152,47 @@ rhit.initializePage = function () {
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		rhit.fbStreaksManager = new rhit.FbStreaksManager();
-		
+
 		new rhit.ListPageController();
-		let streak = rhit.fbStreaksManager.getStreakByAuthor();
 
-		console.log(" streak is" + streak);
-		
+		console.log("timer set");
+		setTimeout(() => {
+			console.log("timer start");
+			let userStreak = rhit.fbStreaksManager.getStreakByAuthor();
+			if (userStreak != null) {
+				console.log("getStreakByAuthor not null, was", userStreak);
+				let currentDate = firebase.firestore.Timestamp.now().toDate();
+				console.log(userStreak._lastLogin);
+				let lastLoginDate = userStreak._lastLogin.toDate();
+				if (lastLoginDate == currentDate) {
+					//Do nothing!
+				}
+				let yesterday = new Date(currentDate - 86400000); //milliseconds in day
+				if (userStreak.lastlogin == yesterday) {
+					userStreak.increaseDays();
+				} else {
+					userStreak.resetStreak();
+				}
+				userStreak.checkForTrophy();
+				userStreak.updateInFirebase();
 
-		if(streak != null){
-			let userStreak = fbStreaksManager.getStreakByAuthor();
-			let currentDate = firebase.firestore.Timestamp.now().toDate();
-			let lastLoginDate = userStreak.lastlogin.toDate();
-			if(lastLoginDate == currentDate){
-				//Do nothing!
+			} else {
+				console.log("decided to make new");
+				rhit.fbStreaksManager.add();
 			}
-			let yesterday = new Date(currentDate - 86400000); //milliseconds in day
-			if(userStreak.lastlogin == yesterday){
-				userStreak.increaseDays();
-			}
-			else{
-				userStreak.resetStreak();
-			}
-			userStreak.checkForTrophy();
-			userStreak.updateInFirebase();
-
-		} else{
-			rhit.fbStreaksManager.add();
-		}
-
-	
+		}, 2000);
 
 
-		
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1198,7 +1200,7 @@ rhit.initializePage = function () {
 
 	}
 	if (document.querySelector("#detailPage")) {
-		console.log("You are on the detail page.");
+
 		const taskId = urlParams.get("id");
 		if (!taskId) {
 			window.location.href = "/";
@@ -1209,7 +1211,7 @@ rhit.initializePage = function () {
 		new rhit.DetailPageController();
 	}
 	if (document.querySelector("#subDetailPage")) {
-		console.log("You are on the subtask detail page.");
+
 		const taskId = urlParams.get("id");
 		if (!taskId) {
 			window.location.href = "/";
