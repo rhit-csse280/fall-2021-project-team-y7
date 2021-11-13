@@ -10,6 +10,11 @@ rhit.FB_KEY_DATE_CREATED = "Date Created";
 rhit.FB_COLLECTION_SUBTASKS = "SubTasks";
 rhit.FB_KEY_PARENT = "Parent";
 rhit.FB_KEY_PNAME = "ParentName";
+rhit.FB_COLLECTION_STREAKS = "Streaks";
+rhit.FB_KEY_MAX_STREAK = "Date Max Achieved";
+rhit.FB_KEYS_DAYS = "Days";
+rhit.FB_KEY_LAST_LOGIN = "Last Login";
+rhit.FB_KEY_MAX_DAYS = "Max Days";
 
 var countdown = 24;
 var secCountdown = 59;
@@ -161,8 +166,10 @@ rhit.ListPageController = class {
 
 		rhit.fbTasksManager.beginListening(this.updateList.bind(this));
 		rhit.fbSubTasksManager.beginListening(this.updateList.bind(this));
+		rhit.fbStreaksManager.beginListening(this.updateList.bind(this));
 
 	}
+
 	askNotificationPermission() {
 		// function to actually ask the permissions
 		function handlePermission(permission) {
@@ -192,15 +199,15 @@ rhit.ListPageController = class {
 		}
 	}
 
-	 checkNotificationPromise() {
+	checkNotificationPromise() {
 		try {
-		  Notification.requestPermission().then();
-		} catch(e) {
-		  return false;
+			Notification.requestPermission().then();
+		} catch (e) {
+			return false;
 		}
-	
+
 		return true;
-	  }
+	}
 
 	_createCard(task) {
 		console.log(task.color + "is color ");
@@ -228,7 +235,7 @@ rhit.ListPageController = class {
 	updateList() {
 
 
-		
+
 		$("#evoCalendar").evoCalendar('destroy');
 		$("#evoCalendar").evoCalendar({
 			todayHighlight: true,
@@ -256,7 +263,7 @@ rhit.ListPageController = class {
 
 						if (box.id == task.id) {
 							let n = new Notification('Task Completed!');
-							
+
 							task.isClicked = true;
 						}
 					}
@@ -865,7 +872,7 @@ rhit.SubTask = class {
 
 			return "ff8b8b";
 		}
-		
+
 		console.log("returning grey");
 		return "525252";
 	}
@@ -997,6 +1004,143 @@ rhit.FbAuthManager = class {
 		return this._user.uid;
 	}
 }
+
+rhit.FbStreaksManager = class {
+	constructor() {
+		this._uid = rhit.fbAuthManager.uid;
+		this._documentSnapshots = [];
+		this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_STREAKS);
+		this._unsubscribe = null;
+	}
+
+	add() {
+
+		this._ref.add({
+
+				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
+				[rhit.FB_KEY_MAX_STREAK]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_LAST_LOGIN]: firebase.firestore.Timestamp.now(),
+				[rhit.FB_KEY_MAX_DAYS]: 0,
+				[rhit.FB_KEYS_DAYS]: 0
+			})
+			.then(function (docRef) {
+				console.log("Streak written with ID: ", docRef.id);
+			})
+			.catch(function (error) {
+				console.error("Error adding document: ", error);
+			})
+
+		setTimeout(() => {
+			console.log("stop!");
+		}, 2000);
+
+		console.log("streak added");
+	}
+	update(maxStreak, lastLogin, maxDays, currentDays){
+		this._ref.update({
+
+			[rhit.FB_KEY_AUTHOR]: this._uid,
+			[rhit.FB_KEY_MAX_STREAK]: maxStreak,
+			[rhit.FB_KEY_LAST_LOGIN]: lastLogin,
+			[rhit.FB_KEY_MAX_DAYS]: maxDays,
+			[rhit.FB_KEYS_DAYS]: currentDays
+		})
+		.then(function (docRef) {
+			console.log("Streak updated with ID: ", docRef.id);
+		})
+		.catch(function (error) {
+			console.error("Error adding document: ", error);
+		})
+
+	setTimeout(() => {
+		console.log("stop!");
+	}, 2000);
+
+	console.log("streak updated");
+	}
+
+	beginListening(changeListener) {
+
+		let query = this._ref.orderBy(rhit.FB_KEY_LAST_LOGIN, "desc").limit(50);
+		
+		console.log(query + "is query");
+		this._unsubscribe = query.onSnapshot((querySnapshot) => {
+			console.log(querySnapshot.docs + "is snapshot");
+			console.log(querySnapshot.empty);
+			this._documentSnapshots = querySnapshot.docs;
+			changeListener();
+
+		});
+	}
+
+	stopListening() {
+		this._unsubscribe();
+	}
+
+	get length() {
+		return this._documentSnapshots.length;
+	}
+	getStreakAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const streak = new rhit.Streak(docSnapshot.id,
+			docSnapshot.get(rhit.FB_KEY_AUTHOR),
+			docSnapshot.get(rhit.FB_KEY_MAX_STREAK), docSnapshot.get(rhit.FB_KEY_LAST_LOGIN), );
+		docSnapshot.get(rhit.FB_KEY_MAX_DAYS), docSnapshot.get(rhit.FB_KEYS_DAYS)
+		return streak;
+	}
+	getStreakByAuthor(){
+		//TODO: check if author is the same for each streak in docsnapshot 
+		//using getStreakAtIndex method, if found return new streak 
+
+		console.log("getss streak" + this._documentSnapshots.length);
+
+		for(let i = 0; i < this._documentSnapshots.length; i++){
+			console.log(this.getStreakAtIndex(i));
+			if(this.getStreakAtIndex(i)._author == this._uid){
+
+				return this.getStreakAtIndex(i);
+			}
+		}
+	}
+
+
+
+}
+
+rhit.Streak = class {
+	constructor(id, author, maxStreak, lastlogin, maxDays, currentDays) {
+		this._id = id;
+		this._author = author;
+		this._maxStreak = maxStreak;
+		this._lastLogin = lastlogin;
+		this._maxDays = maxDays;
+		this._currentDays = currentDays;
+
+	}
+
+	increaseDays = function(){
+		this._currentDays++;
+		this._lastLogin = firebase.firestore.Timestamp.now();
+		if(this._currentDays > this._maxDays){
+			this._maxDays = this._currentDays;
+			this._maxStreak = this._lastLogin;
+		
+		}
+	}
+	resetStreak = function(){
+		this._currentDays = 1;
+		this._lastLogin = firebase.firestore.Timestamp.now();
+	}
+	checkForTrophy = function(){
+		if((this._currentDays <= 30 && this._currentDays % 5 == 0)|| (this._currentDays > 30 && this._currentDays % 10 == 0)){
+			//Add new Trophy with user id, currentdate and currentDays
+		}
+	}
+	updateInFirebase = function(){
+		//TODO: send data to StreaksManager and update in firebase
+		rhit.fbStreaksManager.add();
+	}
+}
 rhit.checkForRedirects = function () {
 	if (document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
 		window.location.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
@@ -1006,17 +1150,52 @@ rhit.checkForRedirects = function () {
 	}
 };
 
+
 rhit.initializePage = function () {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (document.querySelector("#mainPage")) {
-		console.log("You are on the main page.");
-		console.log("yee");
 		const uid = urlParams.get("uid");
 		console.log(uid + "is the user id");
 		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
 		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
+		rhit.fbStreaksManager = new rhit.FbStreaksManager();
+		
 		new rhit.ListPageController();
-		console.log("called new list page");
+		let streak = rhit.fbStreaksManager.getStreakByAuthor();
+
+		console.log(" streak is" + streak);
+		
+
+		if(streak != null){
+			let userStreak = fbStreaksManager.getStreakByAuthor();
+			let currentDate = firebase.firestore.Timestamp.now().toDate();
+			let lastLoginDate = userStreak.lastlogin.toDate();
+			if(lastLoginDate == currentDate){
+				//Do nothing!
+			}
+			let yesterday = new Date(currentDate - 86400000); //milliseconds in day
+			if(userStreak.lastlogin == yesterday){
+				userStreak.increaseDays();
+			}
+			else{
+				userStreak.resetStreak();
+			}
+			userStreak.checkForTrophy();
+			userStreak.updateInFirebase();
+
+		} else{
+			rhit.fbStreaksManager.add();
+		}
+
+	
+
+
+		
+
+
+
+
+
 	}
 	if (document.querySelector("#detailPage")) {
 		console.log("You are on the detail page.");
