@@ -235,11 +235,12 @@ rhit.ListPageController = class {
 	}
 
 	updateList() {
-		const streak = rhit.fbStreaksManager.getStreakByAuthor();
-		const daysDifference = streak._maxDays - streak._currentDays;
+		let streak = rhit.fbStreaksManager.getStreakByAuthor();
+		console.log(streak + "current");
+		let daysDifference = streak._maxDays - streak._currentDays;
 		console.log(streak._currentDays);
 		const newRewards = htmlToElement('<div id = "rewardsContainer"></div>');
-		newRewards.appendChild(htmlToElement(`<div id = "currentText">
+		newRewards.appendChild(htmlToElement(`<div><div id = "currentText">
 		<p class = "rewardsText">You've been on track for</p>
 		<p class = "rewardsNumber" id = "currentStreak">${streak._currentDays} days</p>
 	  </div>
@@ -258,7 +259,7 @@ rhit.ListPageController = class {
 		<p class = "rewardsNumber" id = "maxStreak">${streak._maxDays}</p>
 		<p class = "rewardsText"><span>on </span><span id = "dateMaxAchieved">${streak._maxStreak}</span></p>
 		<p class = "rewardsText"><span id = "breakStreak">${daysDifference}</span><span> days until you break your record!</span></p>
-	  </div>`));
+	  </div></div>`));
 
 
 
