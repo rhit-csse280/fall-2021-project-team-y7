@@ -17,6 +17,7 @@ rhit.FB_KEY_LAST_LOGIN = "Last Login";
 rhit.FB_KEY_MAX_DAYS = "Max Days";
 rhit.FB_COLLECTION_TROPHIES = "Trophies";
 rhit.FB_KEY_DATE = "Date";
+rhit.userStreak;
 
 var countdown = 24;
 var secCountdown = 59;
@@ -245,10 +246,8 @@ rhit.ListPageController = class {
 		<p class = "rewardsNumber" id = "currentStreak">${streak._currentDays} days</p>
 	  </div>
 	  <div id = "lastTrophy">
-		<p class = "rewardsHeader">Last Trophy</p>
 		<div class = "trophyContainer">
 		  <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
-		  <div class = "centered" id="lastTrophy">...</div>
 		</div>
 	  <br>
 		<button id = "trophiesButton" type = "button" class = "btn btn-outline-dark">View All Trophies</button>
@@ -257,10 +256,10 @@ rhit.ListPageController = class {
 		<p class = "rewardsHeader">Lifetime</p>
 		<p class = "rewardsText">Your longest streak is</p>
 		<p class = "rewardsNumber" id = "maxStreak">${streak._maxDays}</p>
-		<p class = "rewardsText"><span>on </span><span id = "dateMaxAchieved">${streak._maxStreak}</span></p>
+		<p class = "rewardsText"><span>on </span><span id = "dateMaxAchieved">${streak._maxStreak.toDate()}</span></p>
 		<p class = "rewardsText"><span id = "breakStreak">${daysDifference}</span><span> days until you break your record!</span></p>
 	  </div></div>`));
-
+	  
 
 
 		$("#evoCalendar").evoCalendar('destroy');
@@ -365,9 +364,21 @@ rhit.ListPageController = class {
 
 		const oldRewards = document.querySelector("#rewardsContainer");
 		oldRewards.removeAttribute("id");
+		const oldButton = document.querySelector("#trophiesButton");
+		oldButton.remove();
 		oldRewards.hidden = true;
 
+
+
 		oldRewards.parentElement.appendChild(newRewards);
+
+		console.log(document.querySelector("#trophiesButton"));
+		if (document.querySelector("#trophiesButton") != null) {
+			document.querySelector("#trophiesButton").onclick = (event) => {
+				document.location.href = "trophies.html";
+	
+			};
+		}
 	}
 }
 rhit.FbTasksManager = class {
@@ -1085,8 +1096,8 @@ rhit.FbStreaksManager = class {
 				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 				[rhit.FB_KEY_MAX_STREAK]: firebase.firestore.Timestamp.now(),
 				[rhit.FB_KEY_LAST_LOGIN]: firebase.firestore.Timestamp.now(),
-				[rhit.FB_KEY_MAX_DAYS]: 0,
-				[rhit.FB_KEY_DAYS]: 0
+				[rhit.FB_KEY_MAX_DAYS]: 1,
+				[rhit.FB_KEY_DAYS]: 1
 			})
 			.then(function (docRef) {
 				console.log("Streak written with ID: ", docRef.id);
@@ -1234,7 +1245,9 @@ rhit.FbTrophiesManager = class {
 	beginListening(changeListener) {
 
 		let query = this._ref.orderBy(rhit.FB_KEY_DATE, "desc").limit(50);
-
+		if (this._uid) {
+			query = query.where(rhit.FB_KEY_AUTHOR, "==", this._uid);
+		}
 		console.log(query + "is query");
 		this._unsubscribe = query.onSnapshot((querySnapshot) => {
 			console.log(querySnapshot.docs + "is snapshot");
@@ -1301,6 +1314,7 @@ rhit.initializePage = function () {
 			let userStreak = rhit.fbStreaksManager.getStreakByAuthor();
 			if (userStreak != null) {
 				console.log("getStreakByAuthor not null, was", userStreak);
+				rhit.userStreak = userStreak;
 				let currentDate = firebase.firestore.Timestamp.now().toDate();
 				console.log(userStreak._lastLogin);
 				let lastLoginDate = userStreak._lastLogin.toDate();

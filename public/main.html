@@ -16,7 +16,7 @@
 <body>
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Gamified Planner</a>
-    <button id="enable">Enable notifications</button>
+    <button id="enable" class="btn btn-outline-light">Enable notifications</button>
     <button  id = "logoutButton" class="btn btn-outline-light" type="button">Log Out</button>
 
 
@@ -49,6 +49,14 @@
           </div>
         </div>
       </div>
+      <div id="colorInfo"><p id="legend">Legend</p>
+        <p class="d41067">> 7 days</p>
+        <p class="8821be">6 days</p>
+        <p class="16bdfc">5 days</p>
+        <p class="9ad53b">4 days</p>
+        <p class="ffc717">3 days</p>
+        <p class="f58929">2 days</p>
+        <p class="fb0000">1 day or overdue</p></div>
       <div id="addTask">
 
         <button id = "addTaskButton" class="btn" type="button">Add Task</button>
@@ -101,10 +109,8 @@
           
         </div>
         <div id = "lastTrophy">
-          <p class = "rewardsHeader">Last Trophy</p>
           <div class = "trophyContainer">
             <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
-            <div class = "centered" id="lastTrophy">...</div>
           </div>
         <br>
           <button id = "trophiesButton" type = "button" class = "btn btn-outline-dark">View All Trophies</button>
