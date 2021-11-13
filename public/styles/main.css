@@ -30,7 +30,7 @@ body {
 
 }
 
-#desc, p{
+#pomodoroDesc, p{
   margin: 1rem;
   text-align: center;
   grid-row: 4/5;
