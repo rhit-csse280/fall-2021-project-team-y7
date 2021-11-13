@@ -533,10 +533,13 @@ rhit.DetailPageController = class {
 		document.querySelector("#menuSignOut").addEventListener("click", (event) => {
 			rhit.fbAuthManager.signOut();
 		});
+
+		
 		document.querySelector("#submitEditQuote").addEventListener("click", (event) => {
-			const quote = document.querySelector("#inputQuote").value;
-			const movie = document.querySelector("#inputMovie").value;
-			rhit.fbSingleQuoteManager.update(quote, movie);
+			const name = document.querySelector("#inputQuote").value;
+			const date = document.querySelector("#inputMovie").value;
+			const desc= document.querySelector("#inputDesc").value;
+			rhit.fbSingleTaskManager.update(name, date, desc);
 		});
 
 		document.querySelector("#submitAddSubtask").addEventListener("click", (event) => {
@@ -563,8 +566,9 @@ rhit.DetailPageController = class {
 
 		$("#editQuoteDialog").on("show.bs.modal", (event) => {
 			// Pre animation
-			document.querySelector("#inputQuote").value = rhit.fbSingleQuoteManager.quote;
-			document.querySelector("#inputMovie").value = rhit.fbSingleQuoteManager.movie;
+			document.querySelector("#inputQuote").value = rhit.fbSingleTaskManager.name;
+			document.querySelector("#inputMovie").value = rhit.fbSingleTaskManager.date;
+			document.querySelector("#inputDesc").value = rhit.fbSingleTaskManager.desc;
 		});
 		$("#editQuoteDialog").on("shown.bs.modal", (event) => {
 			// Post animation
