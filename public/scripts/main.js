@@ -235,6 +235,30 @@ rhit.ListPageController = class {
 	}
 
 	updateList() {
+		const streak = rhit.fbStreaksManager.getStreakByAuthor();
+		const daysDifference = streak._maxDays - streak._currentDays;
+		console.log(streak._currentDays);
+		const newRewards = htmlToElement('<div id = "rewardsContainer"></div>');
+		newRewards.appendChild(htmlToElement(`<div id = "currentText">
+		<p class = "rewardsText">You've been on track for</p>
+		<p class = "rewardsNumber" id = "currentStreak">${streak._currentDays} days</p>
+	  </div>
+	  <div id = "lastTrophy">
+		<p class = "rewardsHeader">Last Trophy</p>
+		<div class = "trophyContainer">
+		  <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
+		  <div class = "centered" id="lastTrophy">...</div>
+		</div>
+	  <br>
+		<button id = "trophiesButton" type = "button" class = "btn btn-outline-dark">View All Trophies</button>
+	  </div>
+	  <div id = "lifetimeText">
+		<p class = "rewardsHeader">Lifetime</p>
+		<p class = "rewardsText">Your longest streak is</p>
+		<p class = "rewardsNumber" id = "maxStreak">${streak._maxDays}</p>
+		<p class = "rewardsText"><span>on </span><span id = "dateMaxAchieved">${streak._maxStreak}</span></p>
+		<p class = "rewardsText"><span id = "breakStreak">${daysDifference}</span><span> days until you break your record!</span></p>
+	  </div>`));
 
 
 
@@ -338,6 +362,11 @@ rhit.ListPageController = class {
 
 		oldList.parentElement.appendChild(newList);
 
+		const oldRewards = document.querySelector("#rewardsContainer");
+		oldRewards.removeAttribute("id");
+		oldRewards.hidden = true;
+
+		oldRewards.parentElement.appendChild(newRewards);
 	}
 }
 rhit.FbTasksManager = class {
@@ -1257,10 +1286,11 @@ rhit.initializePage = function () {
 	if (document.querySelector("#mainPage")) {
 		const uid = urlParams.get("uid");
 		console.log(uid + "is the user id");
-		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
-		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
 		rhit.fbStreaksManager = new rhit.FbStreaksManager();
 		rhit.fbTrophiesManager = new rhit.FbTrophiesManager();
+		rhit.fbTasksManager = new rhit.FbTasksManager(uid);
+		rhit.fbSubTasksManager = new rhit.FbSubTasksManager(uid);
+		
 
 		new rhit.ListPageController();
 
