@@ -12,17 +12,17 @@
 
 <body>
     <nav class="navbar navbar-dark fixed-top">
-        <a class="navbar-brand" href="/main.html">Gamified Planner</a>
-
+        <a id="title" class="navbar-brand" href="/main.html">Gamified Planner</a>
+        <button id="enable">Enable notifications</button>
+        <button  id = "logoutButton" class="btn btn-outline-light" type="button">Log Out</button>
     </nav>
     <div id="trophiesPage" class="container page-container">
-
-        <div class = "trophyContainer">
-            <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
-            <div class = "centered">...</div>
-          </div>
-
-
+        <div id = "trophiesContainer">
+            <div class = "trophyContainer">
+                <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
+                <div class = "centered">...</div>
+            </div>
+        </div>
     </div>
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/popper.js"></script>

@@ -1003,6 +1003,43 @@ rhit.FbAuthManager = class {
 	}
 }
 
+rhit.TrophiesPageController = class {
+	constructor() {
+		let link = document.querySelector("#title");
+		link.href = `/main.html?uid=${rhit.fbAuthManager.uid}`;
+		document.querySelector("#logoutButton").addEventListener("click", (event) => {
+			rhit.fbAuthManager.signOut();
+		});
+		rhit.fbTrophiesManager.beginListening(this.updateList.bind(this));
+	}
+
+	_createTrophy(trophy) {
+
+		return htmlToElement( `<div class = "trophyContainer">
+	 <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
+	 <div class = "centered">${trophy._days}</div>
+ 	</div>`);
+	}
+
+	updateList(){
+		const newList = htmlToElement('<div id = "trophiesContainer"></div>');
+
+		if ((rhit.fbTrophiesManager._documentSnapshots.length == 0)) {
+			newList.appendChild(htmlToElement(`<div style = "font-size: 2rem; text-align: center"> No Trophies Yet </div>`));
+		}
+		for (let i = 0; i < rhit.fbTrophiesManager._documentSnapshots.length; i++) {
+			const trophy = rhit.fbTrophiesManager.getTrophyAtIndex(i);
+			const newTrophy = this._createTrophy(trophy);
+			newList.appendChild(newTrophy);
+		}
+		const oldList = document.querySelector("#trophiesContainer");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+
+		oldList.parentElement.appendChild(newList);
+	}
+}
+
 rhit.FbStreaksManager = class {
 	constructor() {
 		this._uid = rhit.fbAuthManager.uid;
@@ -1148,7 +1185,6 @@ rhit.FbTrophiesManager = class {
 	add(date, days) {
 
 		this._ref.add({
-
 				[rhit.FB_KEY_AUTHOR]: rhit.fbAuthManager.uid,
 				[rhit.FB_KEY_DATE]: date,
 				[rhit.FB_KEY_DAYS]: days
@@ -1297,7 +1333,15 @@ rhit.initializePage = function () {
 		console.log("You are on the login page.");
 		new rhit.LoginPageController();
 	}
+
+	if (document.querySelector("#trophiesPage")) {
+		console.log("You are on the trophies page.");
+		rhit.fbTrophiesManager = new rhit.FbTrophiesManager();
+		new rhit.TrophiesPageController();
+	}
 };
+
+
 
 
 
