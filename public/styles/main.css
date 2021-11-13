@@ -183,8 +183,31 @@ svg #countdown-number {
   font-size: 2rem;
 }
 
-#bigTrophy,
-.trophy {
+.rewardsText{
+  font-size: 1rem;
+  margin: 0.1rem;
+}
+.rewardsNumber{
+  font-size: 1rem;
+  margin:0.1rem;
+  color: #9ad53b;
+}
+.rewardsHeader{
+  margin-bottom:0.1rem;
+}
+.trophyContainer {
+  position: relative;
+  text-align:center;
+  color: white;
+}
+.centered {
+  position:absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bigTrophy{
   width: 100px;
   height: auto;
   display: block;

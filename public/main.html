@@ -17,7 +17,7 @@
   <nav class="navbar navbar-dark fixed-top">
     <a class="navbar-brand" href="#">Gamified Planner</a>
     <button id="enable">Enable notifications</button>
-    <button  id = "logoutButton" class="btn " type="button">Log Out</button>
+    <button  id = "logoutButton" class="btn btn-outline-light" type="button">Log Out</button>
 
 
   </nav>
@@ -95,12 +95,27 @@
       </div>
       <div id="rewards">
         
-        <div>Your current streak is 8 days</div>
-        <img src = "trophy.png" id="bigTrophy" alt ="Trophy Clipart">
+        <div id = "currentText">
+          <p class = "rewardsText">You've been on track for</p>
+          <p class = "rewardsNumber" id = "currentStreak">loading...</p>
+          <p class = "rewardsText"><span>Next reward in </span><span id = "nextReward">loading...</span><span> days</span></p>
+        </div>
+        <div id = "lastTrophy">
+          <p class = "rewardsHeader">Last Trophy</p>
+          <div class = "trophyContainer">
+            <img src = "trophy.png" class="bigTrophy" alt ="Trophy Clipart">
+            <div class = "centered" id="lastTrophy">...</div>
+          </div>
         <br>
-        <div id = "trophyInfo">
-          <div>You have 13 days until you get a new trophy!</div>
-          <button id = "trophiesButton" type = "button" class = "btn btn-outline-dark">View All Trophies</button></div>
+          <button id = "trophiesButton" type = "button" class = "btn btn-outline-dark">View All Trophies</button>
+        </div>
+        <div id = "lifetimeText">
+          <p class = "rewardsHeader">Lifetime</p>
+          <p class = "rewardsText">Your longest streak is</p>
+          <p class = "rewardsNumber" id = "maxStreak">loading...</p>
+          <p class = "rewardsText"><span>on </span><span id = "dateMaxAchieved">loading...</span></p>
+          <p class = "rewardsText"><span id = "breakStreak">loading...</span><span> days until you break your record!</span></p>
+        </div>
       </div>
 
     </div>
